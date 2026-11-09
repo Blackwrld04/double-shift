@@ -20,7 +20,7 @@ Double Shift eliminates the chaos of the Friday 8:00 PM dinner rush. Traditional
 
 **Simulate before you seat. Discover bottlenecks in seconds. Stage human-approved shifts with autonomous AI.**
 
-[🚀 Live Web App](https://double-shift-one.vercel.app) · [🎬 Video Walkthrough](https://clips.agent-native.com/share/RfVBAPYxXJhO?ref=clip_share&via=EmAPdukTHYOgGyPsuV8hFrWmbc2CjVSI) · [⚡ Service Simulation Lab](#pillar-1-discrete-event-simulation--monte-carlo-engine) · [🗺️ Interactive Floor Plan](#pillar-3-interactive-floor-plan-twin--spatial-operations) · [👥 Staff & Shift Roster](#pillar-4-dynamic-restaurant-onboarding--multi-venue-architecture) · [🤖 Operations Agent](#pillar-2-autonomous-operations-agent--staged-proposals) · [📖 Deployment Blueprint](#production-deployment-matrix)
+[Live Web App](https://double-shift-one.vercel.app) · [Video Walkthrough](https://clips.agent-native.com/share/RfVBAPYxXJhO?ref=clip_share&via=EmAPdukTHYOgGyPsuV8hFrWmbc2CjVSI) · [How to Test](#how-to-test-double-shift) · [Service Simulation Lab](#pillar-1-discrete-event-simulation--monte-carlo-engine) · [Interactive Floor Plan](#pillar-3-interactive-floor-plan-twin--spatial-operations) · [Staff & Shift Roster](#pillar-4-dynamic-restaurant-onboarding--multi-venue-architecture) · [Operations Agent](#pillar-2-autonomous-operations-agent--staged-proposals) · [Deployment Blueprint](#production-deployment-matrix)
 
 **Predictive Hospitality Intelligence — Deterministic Queue Simulation, Zero Hallucinated Numbers, and Safe Operational Execution.**
 
@@ -36,14 +36,14 @@ Discrete-Event Simulation · React Router 7 · Vercel AI SDK 6.0 · Agent-Native
 
 | Open / Route | Look for | What it establishes |
 | :--- | :--- | :--- |
-| [🎬 **Video Demo**](https://clips.agent-native.com/share/RfVBAPYxXJhO?ref=clip_share&via=EmAPdukTHYOgGyPsuV8hFrWmbc2CjVSI) | 4-Minute Agent-Native Video Walkthrough | Full end-to-end studio walkthrough: onboarding wizard, live bottleneck detection, AI Operations Copilot layout synthesis, and Monte Carlo rush results. |
-| [🚀 `/home`](file:///home/blackwrld04/Downloads/DoubleShift/app/routes/home.tsx) | Executive Operations Dashboard, KPI Strip & Live Floor Canvas | Comprehensive restaurant twin with P95 wait times, gross revenue, table turn rates, and active section heatmaps. |
-| [⚡ `/home` (Simulation Dock)](file:///home/blackwrld04/Downloads/DoubleShift/app/components/workspace/ServiceDock.tsx) | What-If Scenario Lab & Monte Carlo Batch Runner | Test 10x, 25x, or 50x shift replications, toggle patio weather closures, simulate staff callouts, and inspect kitchen queue depths. |
-| [🗺️ `/home` (Floor Plan Canvas)](file:///home/blackwrld04/Downloads/DoubleShift/app/components/workspace/FloorPlanPanel.tsx) | Interactive 2D Drag-and-Drop Floor Plan | Real-time table status (vacant, seated, dining, dessert, dirty), party capacity indicators (2-top, 4-top, 6-top, 8-top), and section bounds. |
-| [🤖 `/chat`](file:///home/blackwrld04/Downloads/DoubleShift/app/routes/chat._index.tsx) | Autonomous Operations Agent & Visual Change Inspector | Conversational operations partner that analyzes shift bottlenecks, runs simulations, and drafts staged proposals for human approval. |
-| [📋 `/home` (Proposals Rail)](file:///home/blackwrld04/Downloads/DoubleShift/actions/apply-proposal.ts) | Human-in-the-Loop Proposal Review & Concurrency Gate | Visual before/after diff of proposed floor changes and shift adjustments with one-click Apply or Reject. |
-| [🏪 `/sign-in`](file:///home/blackwrld04/Downloads/DoubleShift/app/routes/sign-in.tsx) | Split Auth Interface & New Restaurant Setup Wizard | Warm restaurant ambiance hero visual with secure multi-tenant sign-in and automated restaurant onboarding wizard. |
-| [🟢 `/_agent-native/health`](file:///home/blackwrld04/Downloads/DoubleShift/server/lib/workspace.ts) | Database & Runtime Telemetry | Real-time health check endpoint monitoring PostgreSQL / PGlite database connectivity, schema migrations, and active background workers. |
+| [**Video Demo**](https://clips.agent-native.com/share/RfVBAPYxXJhO?ref=clip_share&via=EmAPdukTHYOgGyPsuV8hFrWmbc2CjVSI) | 4-Minute Agent-Native Video Walkthrough | Full end-to-end studio walkthrough: onboarding wizard, live bottleneck detection, AI Operations Copilot layout synthesis, and Monte Carlo rush results. |
+| [`/home`](file:///home/blackwrld04/Downloads/DoubleShift/app/routes/home.tsx) | Executive Operations Dashboard, KPI Strip & Live Floor Canvas | Comprehensive restaurant twin with P95 wait times, gross revenue, table turn rates, and active section heatmaps. |
+| [`/home` (Simulation Dock)](file:///home/blackwrld04/Downloads/DoubleShift/app/components/workspace/ServiceDock.tsx) | What-If Scenario Lab & Monte Carlo Batch Runner | Test 10x, 25x, or 50x shift replications, toggle patio weather closures, simulate staff callouts, and inspect kitchen queue depths. |
+| [`/home` (Floor Plan Canvas)](file:///home/blackwrld04/Downloads/DoubleShift/app/components/workspace/FloorPlanPanel.tsx) | Interactive 2D Drag-and-Drop Floor Plan | Real-time table status (vacant, seated, dining, dessert, dirty), party capacity indicators (2-top, 4-top, 6-top, 8-top), and section bounds. |
+| [`/chat`](file:///home/blackwrld04/Downloads/DoubleShift/app/routes/chat._index.tsx) | Autonomous Operations Agent & Visual Change Inspector | Conversational operations partner that analyzes shift bottlenecks, runs simulations, and drafts staged proposals for human approval. |
+| [`/home` (Proposals Rail)](file:///home/blackwrld04/Downloads/DoubleShift/actions/apply-proposal.ts) | Human-in-the-Loop Proposal Review & Concurrency Gate | Visual before/after diff of proposed floor changes and shift adjustments with one-click Apply or Reject. |
+| [`/sign-in`](file:///home/blackwrld04/Downloads/DoubleShift/app/routes/sign-in.tsx) | Split Auth Interface & New Restaurant Setup Wizard | Warm restaurant ambiance hero visual with secure multi-tenant sign-in and automated restaurant onboarding wizard. |
+| [`/_agent-native/health`](file:///home/blackwrld04/Downloads/DoubleShift/server/lib/workspace.ts) | Database & Runtime Telemetry | Real-time health check endpoint monitoring PostgreSQL / PGlite database connectivity, schema migrations, and active background workers. |
 
 ---
 
@@ -127,11 +127,11 @@ Double Shift provides an interactive, direct-manipulation 2D canvas representing
 - **Dynamic Dining Sections**: Separate zones for Main Dining Room, Bar Lounge, Outdoor Patio, and Private Dining Room, each with independent operational rules.
 - **Table Capacities & Geometries**: Visual representations of round tables, rectangular booths, and high-tops with seat counts from 2 to 12 covers.
 - **Live State Color-Coding**:
-  - 🟢 **Vacant & Ready**: Cleaned and unassigned.
-  - 🟡 **Seated & Ordering**: Drinks placed, kitchen tickets pending.
-  - 🟠 **Entree In-Progress**: Kitchen stations active, table occupied.
-  - 🟣 **Check Dropped / Dessert**: Approaching table turn.
-  - 🔴 **Dirty / Needs Bussing**: Impeding host seating speed.
+  - **Vacant & Ready**: Cleaned and unassigned.
+  - **Seated & Ordering**: Drinks placed, kitchen tickets pending.
+  - **Entree In-Progress**: Kitchen stations active, table occupied.
+  - **Check Dropped / Dessert**: Approaching table turn.
+  - **Dirty / Needs Bussing**: Impeding host seating speed.
 - **Drag-and-Drop Floor Restructuring**: Managers can reposition tables, combine adjacent tables for large parties, or add/remove tables dynamically via [`actions/update-table.ts`](file:///home/blackwrld04/Downloads/DoubleShift/actions/update-table.ts).
 
 ---
@@ -258,6 +258,106 @@ DoubleShift/
 
 ---
 
+## How to Test Double Shift
+
+You can test Double Shift in two ways: interactively via the live cloud deployment, or locally via the automated test suite and development server.
+
+### Method 1: Interactive Live Workflow (Zero Install)
+
+The full application is deployed live on Vercel at [https://double-shift-one.vercel.app](https://double-shift-one.vercel.app).
+
+Follow this step-by-step test sequence to verify the digital twin and autonomous agent capabilities:
+
+1. **Sign In & Onboarding Wizard (`/sign-in` -> `/home`)**:
+   - Access [https://double-shift-one.vercel.app](https://double-shift-one.vercel.app).
+   - Sign in using existing credentials or create a new account on the split-screen authentication screen.
+   - On the onboarding wizard, configure your initial restaurant:
+     - **Venue Name**: Enter a name (e.g., `Lucca` or `Milano Bistro`).
+     - **Service Hours**: Select Dinner Service (`17:00` - `22:30`).
+     - **Target Covers**: Set to `80`.
+     - **Floor Layout**: Select the `Boutique Bistro` preset (bar + dining room).
+   - Click **Launch restaurant operations**.
+
+2. **Discover the Baseline Bottlenecks (`/home`)**:
+   - The operations dashboard mounts with initial baseline metrics:
+     - Only **24 covers seated** out of 80 targeted.
+     - **31 walkouts** due to excessive wait times.
+     - Net contribution of **-$41** (operating at a net loss).
+   - Scroll down to station analytics: observe the **Saute station** highlighted in red, where queue times peaked at 24 minutes around 8:04 PM.
+
+3. **Engage the Autonomous Operations Agent (`/chat` or Floating Drawer)**:
+   - Click the floating **Operations Agent** icon on the bottom right of the screen (or navigate to `/chat`).
+   - In the chat composer, type:
+     ```text
+     set the tables ready for 100 guest
+     ```
+   - Watch the agent's real-time thought stream:
+     - It calls `get-workspace` to inspect the venue dimensions and fire safety egress bounds.
+     - It synthesizes table density, converting 2-tops into combined 4-tops while guaranteeing server pathways remain at least 36 inches wide.
+     - It executes the table mutations and reports completion.
+
+4. **Verify Live Floor Plan Reconfiguration (`/home`)**:
+   - Look at the interactive 2D floor plan canvas:
+     - 21 active tables (`T01` through `T21`) render in real time with updated chair counts.
+     - Total capacity now exceeds 100 guests while preserving clear walkways and egress routes.
+
+5. **Execute the Monte Carlo Stress Test ("Run service")**:
+   - Click the blue **Run service** button on the dashboard to simulate a 1,000-guest Monte Carlo dinner rush.
+   - Observe the immediate metric surge:
+     - Seated covers jump from 24 to **89 covers** (+270% increase).
+     - Walkouts drop from 31 to **10 walkouts**.
+     - Net contribution leaps from a loss to **+$2,200** in profit.
+     - Real-time station insight advises: *"Saute is the constraint. Queue peaked at 24m around 8:04 PM. Add 1 prep cook to unlock $640 more."*
+
+6. **Test Multi-Venue Switching & Integrations**:
+   - Click the venue switcher modal in the header navigation to switch between restaurant locations.
+   - Navigate to **Settings -> Integrations** to view connectors for Builder.io, Notion, Slack, and Figma.
+
+---
+
+### Method 2: Local Verification & Automated Test Suite
+
+To test the codebase, simulation algorithms, and safety concurrency rules locally:
+
+1. **Clone and Install Dependencies**:
+   ```bash
+   git clone git@github.com:Blackwrld04/double-shift.git
+   cd double-shift
+   corepack enable
+   pnpm install
+   ```
+
+2. **Run the 21 Automated Unit & Integration Tests**:
+   ```bash
+   pnpm test
+   ```
+   All 21 test suites execute against the deterministic discrete-event simulation engine and workspace context:
+   - Poisson party arrival distributions within confidence intervals.
+   - Host seating heuristics, table size minimums, and section server caps.
+   - Multi-station kitchen queues (saute, grill, pantry, bar) under heavy load.
+   - Guest patience and walkout revenue decrement calculations.
+   - Monte Carlo replication determinism across identical seeds.
+   - Optimistic concurrency conflict rejection (HTTP 409) on stale proposals.
+   - Multi-venue database tenant isolation.
+
+3. **Run Typecheck & Agent-Native Doctor**:
+   ```bash
+   # Strict TypeScript verification
+   pnpm typecheck
+
+   # Agent-Native architectural and safety audit
+   pnpm agent-native:doctor
+   ```
+
+4. **Start the Local Development Server**:
+   ```bash
+   cp .env.example .env
+   pnpm dev
+   ```
+   Open `http://localhost:3000` in your browser. Double Shift runs with an embedded zero-config PGlite database out of the box with zero external setup required.
+
+---
+
 ## Tests and Quality Checks
 
 Double Shift maintains a comprehensive test suite validating simulation accuracy, concurrency safety, and migration integrity:
@@ -274,17 +374,17 @@ pnpm agent-native:doctor
 ```
 
 ```
- ✓ server/lib/sim.test.ts (17 tests) - 373ms
-   ✓ Poisson party arrival distribution within confidence bounds
-   ✓ Host seating respects table size minimums and server caps
-   ✓ Kitchen ticket queue handles station overload gracefully
-   ✓ Walkout threshold correctly flags abandoned covers
-   ✓ Monte Carlo replications produce deterministic aggregates with identical seeds
- ✓ server/lib/workspace.test.ts (4 tests) - 3446ms
-   ✓ resolves active venue context cleanly with defaults
-   ✓ verifies optimistic concurrency on proposal execution
-   ✓ rejects unauthenticated mutations to floor geometry
-   ✓ ensures multi-venue isolation
+ PASS server/lib/sim.test.ts (17 tests) - 373ms
+   PASS Poisson party arrival distribution within confidence bounds
+   PASS Host seating respects table size minimums and server caps
+   PASS Kitchen ticket queue handles station overload gracefully
+   PASS Walkout threshold correctly flags abandoned covers
+   PASS Monte Carlo replications produce deterministic aggregates with identical seeds
+ PASS server/lib/workspace.test.ts (4 tests) - 3446ms
+   PASS resolves active venue context cleanly with defaults
+   PASS verifies optimistic concurrency on proposal execution
+   PASS rejects unauthenticated mutations to floor geometry
+   PASS ensures multi-venue isolation
 
  Test Files  2 passed (2)
       Tests  21 passed (21)
