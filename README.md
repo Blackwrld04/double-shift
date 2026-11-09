@@ -2,6 +2,8 @@
 
 An agent-native operations twin for **Osteria Nove**, a 24-table restaurant running a Friday dinner service (5:00–10:30 PM). Drag the floor plan, run the service, and let an agent test staffing, layout and demand changes against many simulated Fridays before anything touches the live floor.
 
+**Demo:** [Watch the 52-second Clips walkthrough](https://clips.agent-native.com/share/6BS1hOc2QWx1) · **Source:** [github.com/Blackwrld04/double-shift](https://github.com/Blackwrld04/double-shift)
+
 ## How it works
 
 - **Deterministic engine** (`server/lib/sim.ts`): a seeded TypeScript simulation of arrivals, host seating, server sections, kitchen stations, table turns, walkouts, overtime and contribution margin. The app runs it as a Monte Carlo batch (10, 25 or 50 replications) and aggregates P95 waits, walkouts, net and station queues. The LLM never computes numbers; it calls actions and reads results.
