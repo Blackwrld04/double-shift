@@ -1,5 +1,4 @@
 import { navigateWithAgentChatViewTransition } from "@agent-native/core/client/agent-chat";
-import { useT } from "@agent-native/core/client/i18n";
 import { focusAgentChat } from "@agent-native/toolkit/app/chat";
 import { AgentSidebar } from "@agent-native/toolkit/app/chat";
 import { type ReactNode } from "react";
@@ -22,7 +21,6 @@ export function AgentInspector({
   chatHomeHandoffPending,
 }: AgentInspectorProps) {
   const navigate = useNavigate();
-  const t = useT();
 
   function openAskAgentFullscreen(threadId?: string) {
     focusAgentChat();
@@ -39,12 +37,12 @@ export function AgentInspector({
       browserTabId={TAB_ID}
       openOnChatRunning={chatHomeHandoffActive}
       onFullscreenRequest={openAskAgentFullscreen}
-      emptyStateText={t("chat.inspectEmptyState")}
+      emptyStateText="Ask Double Shift to stress-test a service, compare scenarios, or stage a layout or staffing change for your approval."
       agentPageHref="/settings/agent"
       suggestions={[
-        t("chat.inspectSuggestionCapabilities"),
-        t("chat.inspectSuggestionHello"),
-        t("chat.inspectSuggestionAction"),
+        "Stress-test Friday with rain and two callouts",
+        "Can a floating server fix the rain scenario? Simulate it.",
+        "Which station bottlenecks first at peak?",
       ]}
     >
       {children}

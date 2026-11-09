@@ -2,6 +2,18 @@
 
 This guide is for development-mode agents editing this app's source code. For app operations and tools, see AGENTS.md.
 
+## Double Shift (this app)
+
+This repo started from the Agent-Native chat template and is now the Double Shift restaurant operations twin. Domain code lives in:
+
+- `server/lib/sim.ts` — seeded simulation engine (covered by `server/lib/sim.test.ts`)
+- `server/lib/changes.ts` — change-set schemas applied to scenarios and proposals
+- `server/lib/workspace.ts`, `server/lib/seed.ts`, `server/db/schema.ts`, `server/plugins/db.ts` — data, seed and migrations
+- `actions/` — shared agent/UI operations; live-floor writes are `uiOnly`
+- `app/routes/home.tsx`, `app/components/workspace/` — the workspace UI
+
+The sections below describe the underlying template and framework.
+
 ## Tech Stack
 
 - **Framework:** @agent-native/core + React Router v8 (framework mode)

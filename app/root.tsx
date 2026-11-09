@@ -41,8 +41,8 @@ import stylesheet from "./global.css?url";
 configureTracking({
   getDefaultProps: (_name, properties) => ({
     ...properties,
-    app: "double-shift-chat",
-    template: "chat",
+    app: "double-shift",
+    template: "double-shift",
   }),
 });
 
@@ -71,7 +71,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: LOCALE_INIT_SCRIPT }}
         />
-        <meta name="theme-color" content="#18181B" />
+        <meta name="theme-color" content="#0a0a0a" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta
           name="apple-mobile-web-app-status-bar-style"
@@ -185,6 +185,7 @@ export default function Root() {
       <AppProviders
         queryClient={queryClient}
         skeletonLayout={skeletonLayoutForPath(pathname)}
+        defaultTheme="dark"
         i18n={{ catalog: i18nCatalog }}
       >
         <DbSyncSetup />

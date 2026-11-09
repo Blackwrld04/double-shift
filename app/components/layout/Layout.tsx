@@ -23,6 +23,7 @@ import {
   SheetDescription,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { WorkspaceProvider } from "@/components/workspace/workspace-context";
 import { APP_TITLE } from "@/lib/app-config";
 import { HOME_PATH, isChatPathname } from "@/lib/chat-paths";
 import { TAB_ID } from "@/lib/tab-id";
@@ -77,8 +78,10 @@ function EndVoiceChatOutsideChat() {
 export function Layout({ children }: LayoutProps) {
   return (
     <RealtimeVoiceModeProvider browserTabId={TAB_ID}>
-      <EndVoiceChatOutsideChat />
-      <LayoutShell>{children}</LayoutShell>
+      <WorkspaceProvider>
+        <EndVoiceChatOutsideChat />
+        <LayoutShell>{children}</LayoutShell>
+      </WorkspaceProvider>
     </RealtimeVoiceModeProvider>
   );
 }

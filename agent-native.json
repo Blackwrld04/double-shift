@@ -4,6 +4,20 @@
     "firstRun": "off"
   },
   "doctor": {
-    "failOnBuild": false
+    "failOnBuild": false,
+    "dbToolScopingDenylist": {
+      "ds_venues": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved.",
+      "ds_floors": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved.",
+      "ds_sections": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved.",
+      "ds_tables": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved.",
+      "ds_stations": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved.",
+      "ds_staff": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved.",
+      "ds_menu_items": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved.",
+      "ds_demand_profiles": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved.",
+      "ds_scenarios": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved.",
+      "ds_runs": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved.",
+      "ds_proposals": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved.",
+      "ds_activity": "Single-venue workspace (Osteria Nove): every signed-in operator shares one venue, so there is no per-user ownership to scope. Written only through reviewed actions; live-floor writes are uiOnly and human-approved."
+    }
   }
 }

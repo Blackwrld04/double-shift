@@ -1,5 +1,6 @@
 import { appPath } from "@agent-native/core/client/api-path";
 import { useT } from "@agent-native/core/client/i18n";
+import { focusAgentChat } from "@agent-native/toolkit/app/chat";
 import {
   navigateWithAgentChatViewTransition,
   useAgentChatRunningThreads,
@@ -10,15 +11,16 @@ import {
   OwnershipChatHistoryRail,
   useOwnershipChatHistory,
 } from "@agent-native/toolkit/app/chat/ownership-history";
-import { OrgSwitcher } from "@agent-native/toolkit/app/org";
 import { openCommandMenu } from "@agent-native/toolkit/app/shared";
-import { AgentNativeIcon } from "@agent-native/toolkit/app/shared/AgentNativeIcon";
 import {
-  IconEdit,
-  IconHome,
+  IconChevronRight,
+  IconLayoutGrid,
+  IconLayoutList,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
   IconLoader2,
+  IconMessageCircle,
+  IconPlus,
   IconSearch,
 } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
@@ -30,6 +32,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useWorkspace } from "@/components/workspace/workspace-context";
+import { money } from "@/components/workspace/format";
 import { APP_TITLE } from "@/lib/app-config";
 import { chatThreadPath, HOME_PATH, threadIdFromPath } from "@/lib/chat-paths";
 import { cn } from "@/lib/utils";
@@ -115,42 +119,6 @@ function persistActiveThreadId(threadId: string) {
   try {
     localStorage.setItem(CHAT_ACTIVE_THREAD_KEY, threadId);
   } catch {}
-}
-
-function HomeNavLink({ collapsed }: { collapsed: boolean }) {
-  const t = useT();
-  const location = useLocation();
-  const active = location.pathname === HOME_PATH;
-  const link = (
-    <Link
-      to={HOME_PATH}
-      aria-current={active ? "page" : undefined}
-      aria-label={collapsed ? t("navigation.home") : undefined}
-      className={cn(
-        "flex items-center text-sidebar-accent-foreground transition-colors hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-        active && "bg-sidebar-accent",
-        collapsed
-          ? "size-8 justify-center rounded-md"
-          : "h-8 w-full gap-3 rounded-lg px-3 text-sm font-medium",
-      )}
-    >
-      <IconHome className="size-4 shrink-0" strokeWidth={1.8} />
-      <span className={collapsed ? "sr-only" : "truncate"}>
-        {t("navigation.home")}
-      </span>
-    </Link>
-  );
-
-  if (collapsed) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>{link}</TooltipTrigger>
-        <TooltipContent side="right">{t("navigation.home")}</TooltipContent>
-      </Tooltip>
-    );
-  }
-
-  return <div className="px-2">{link}</div>;
 }
 
 function ChatThreadsSection({ collapsed }: { collapsed: boolean }) {
@@ -239,37 +207,37 @@ function ChatThreadsSection({ collapsed }: { collapsed: boolean }) {
     if (threadId) openThread(threadId, { isNew: true });
   }
 
-  const newChatButton = (
-    <button
-      type="button"
-      onClick={() => void handleNewChat()}
-      className={cn(
-        "flex items-center text-sidebar-accent-foreground transition-colors hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-        collapsed
-          ? "size-8 justify-center rounded-md"
-          : "h-8 w-full gap-3 rounded-lg px-3 text-sm font-medium",
-      )}
-      aria-label={collapsed ? t("chat.newChat") : undefined}
-    >
-      <IconEdit className="size-4 shrink-0" strokeWidth={1.8} />
-      <span className={collapsed ? "sr-only" : "truncate"}>
-        {t("chat.newChat")}
-      </span>
-    </button>
-  );
-
   if (collapsed) {
     return (
       <Tooltip>
-        <TooltipTrigger asChild>{newChatButton}</TooltipTrigger>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            onClick={() => void handleNewChat()}
+            className="ds-rail-icon-button"
+            aria-label={t("chat.newChat")}
+          >
+            <IconMessageCircle className="size-4" strokeWidth={1.8} />
+          </button>
+        </TooltipTrigger>
         <TooltipContent side="right">{t("chat.newChat")}</TooltipContent>
       </Tooltip>
     );
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="px-2 pb-3">{newChatButton}</div>
+    <div className="ds-rail-conversations">
+      <div className="ds-rail-section-head">
+        <span className="ds-rail-label">Conversations</span>
+        <button
+          type="button"
+          className="ds-rail-add"
+          onClick={() => void handleNewChat()}
+          aria-label={t("chat.newChat")}
+        >
+          <IconPlus size={13} stroke={2} />
+        </button>
+      </div>
       <OwnershipChatHistoryRail
         {...history}
         onNewChat={() => void handleNewChat()}
@@ -298,9 +266,189 @@ function ChatThreadsSection({ collapsed }: { collapsed: boolean }) {
           newChat: t("chat.newChat"),
         }}
         className="chat-sidebar-history min-h-0 flex-1"
-        listClassName="pb-4"
+        listClassName="pb-2"
       />
     </div>
+  );
+}
+
+function RailNavLink({
+  to,
+  icon: Icon,
+  label,
+  active,
+}: {
+  to: string;
+  icon: typeof IconLayoutGrid;
+  label: string;
+  active: boolean;
+}) {
+  return (
+    <Link
+      to={to}
+      aria-current={active ? "page" : undefined}
+      data-active={active ? "true" : "false"}
+      className="ds-rail-nav-link"
+    >
+      <Icon size={15} stroke={1.8} />
+      <span>{label}</span>
+    </Link>
+  );
+}
+
+function ScenarioRail() {
+  const {
+    workspace,
+    selectedScenarioId,
+    selectScenario,
+    setDockTab,
+    runningScenarioId,
+    isLoading,
+  } = useWorkspace();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [expanded, setExpanded] = useState(true);
+  const scenarios = workspace?.scenarios ?? [];
+  const staged = workspace?.proposals.filter((proposal) => proposal.status === "staged").length ?? 0;
+
+  function openScenario(scenarioId: string) {
+    selectScenario(scenarioId);
+    if (location.pathname !== HOME_PATH) navigate(HOME_PATH);
+  }
+
+  function openProposals() {
+    setDockTab("proposals");
+    if (location.pathname !== HOME_PATH) navigate(HOME_PATH);
+  }
+
+  return (
+    <div className="ds-rail-product">
+      <div className="ds-rail-venue">
+        <span className="ds-rail-live" />
+        <div className="ds-rail-venue-copy">
+          <strong>Osteria Nove</strong>
+          <span>Friday dinner · 5:00–10:30 PM</span>
+        </div>
+        <span className="ds-rail-venue-tag">live</span>
+      </div>
+
+      <div className="ds-rail-actions">
+        <NavActions />
+      </div>
+
+      <div className="ds-rail-scenario-block">
+        <div className="ds-rail-section-head">
+          <button
+            type="button"
+            className="ds-rail-label-button"
+            aria-expanded={expanded}
+            onClick={() => setExpanded((value) => !value)}
+          >
+            Scenarios
+            <span className="ds-rail-count">{scenarios.length}</span>
+          </button>
+          <button
+            type="button"
+            className="ds-rail-add"
+            onClick={() => focusAgentChat()}
+            aria-label="Ask the agent to create a scenario"
+            title="Ask the agent to create a scenario"
+          >
+            <IconPlus size={13} stroke={2} />
+          </button>
+        </div>
+        {expanded ? (
+          <div className="ds-rail-scenarios">
+            {isLoading && scenarios.length === 0 ? (
+              <div className="ds-rail-skeleton">
+                <span />
+                <span />
+              </div>
+            ) : null}
+            {scenarios.map((scenario) => {
+              const metrics = scenario.latestRun?.metrics;
+              const isRunning = runningScenarioId === scenario.id;
+              return (
+                <button
+                  key={scenario.id}
+                  type="button"
+                  className={cn(
+                    "ds-rail-scenario",
+                    selectedScenarioId === scenario.id && "is-selected",
+                  )}
+                  onClick={() => openScenario(scenario.id)}
+                >
+                  <span
+                    className="ds-rail-scenario-pip"
+                    data-status={scenario.status}
+                    data-running={isRunning ? "true" : "false"}
+                  />
+                  <span className="ds-rail-scenario-copy">
+                    <strong>{scenario.name}</strong>
+                    <span>
+                      {metrics
+                        ? `${Math.round(metrics.coversSeated)} covers · ${Math.round(metrics.walkouts)} walkouts`
+                        : isRunning
+                          ? "simulating…"
+                          : "not run yet"}
+                    </span>
+                  </span>
+                  <IconChevronRight size={13} className="ds-rail-scenario-arrow" />
+                </button>
+              );
+            })}
+            <button type="button" className="ds-rail-scenario ds-rail-scenario-new" onClick={() => focusAgentChat()}>
+              <span className="ds-rail-scenario-plus">
+                <IconPlus size={12} stroke={2} />
+              </span>
+              <span className="ds-rail-scenario-copy">
+                <strong>New what-if</strong>
+                <span>describe a change to test</span>
+              </span>
+            </button>
+          </div>
+        ) : null}
+      </div>
+
+      <button type="button" className="ds-rail-proposals" onClick={openProposals}>
+        <span className="ds-rail-proposals-icon">
+          <IconLayoutList size={15} stroke={1.8} />
+        </span>
+        <span className="ds-rail-proposals-copy">
+          <strong>{staged > 0 ? `${staged} proposal${staged === 1 ? "" : "s"}` : "No proposals"}</strong>
+          <span>{staged > 0 ? "waiting for your approval" : "agent stages, you decide"}</span>
+        </span>
+        {staged > 0 ? <span className="ds-rail-proposals-count">{staged}</span> : <IconChevronRight size={13} />}
+      </button>
+
+      {workspace?.runs[0]?.metrics ? (
+        <div className="ds-rail-profit">
+          <span>Last run net</span>
+          <strong data-negative={workspace.runs[0].metrics.net < 0 ? "true" : "false"}>
+            {money(workspace.runs[0].metrics.net, true)}
+          </strong>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function NavActions() {
+  const location = useLocation();
+  return (
+    <>
+      <RailNavLink
+        to={HOME_PATH}
+        icon={IconLayoutGrid}
+        label="Service twin"
+        active={location.pathname === HOME_PATH}
+      />
+      <button type="button" className="ds-rail-nav-link" onClick={() => focusAgentChat()}>
+        <IconMessageCircle size={15} stroke={1.8} />
+        <span>Ask the agent</span>
+        <kbd className="ds-rail-kbd">⌘K</kbd>
+      </button>
+    </>
   );
 }
 
@@ -319,7 +467,7 @@ export function Sidebar({
         <button
           type="button"
           onClick={() => onCollapsedChange?.(!collapsed)}
-          className="flex size-8 shrink-0 items-center justify-center rounded-md text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+          className="ds-rail-icon-button"
           aria-label={
             collapsed
               ? t("navigation.expandSidebar")
@@ -336,102 +484,93 @@ export function Sidebar({
       </TooltipContent>
     </Tooltip>
   ) : null;
-  const searchButton = (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <button
-          type="button"
-          onClick={openCommandMenu}
-          aria-label={t("root.commandSearch")}
-          className="flex size-8 items-center justify-center rounded-md text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
-        >
-          <IconSearch className="size-4" strokeWidth={1.8} />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent side="right">{t("root.commandSearch")}</TooltipContent>
-    </Tooltip>
-  );
 
   return (
     <aside
       data-collapsed={collapsed ? "true" : "false"}
       className={cn(
-        "flex h-full min-w-0 shrink-0 flex-col overflow-hidden border-e border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-out",
+        "ds-rail flex h-full min-w-0 shrink-0 flex-col overflow-hidden",
         collapsed ? "w-12" : "w-full",
       )}
     >
-      <div
-        className={cn(
-          "flex h-14 shrink-0 items-center",
-          collapsed ? "justify-center px-1" : "gap-1 px-3",
-        )}
-      >
+      <div className="ds-rail-head">
+        <Link to="/" className="ds-rail-brand" aria-label={APP_TITLE}>
+          <span className="ds-rail-mark">
+            <span />
+            <span />
+          </span>
+          {collapsed ? null : (
+            <span className="ds-rail-brand-copy">
+              <strong>Double Shift</strong>
+              <span>operations twin</span>
+            </span>
+          )}
+        </Link>
+        {collapsed ? null : collapseButton}
+      </div>
+
+      {collapsed ? (
+        <nav className="ds-rail-collapsed-nav" aria-label={t("navigation.navigation")}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link to={HOME_PATH} className="ds-rail-icon-button" aria-label="Service twin">
+                <IconLayoutGrid className="size-4" strokeWidth={1.8} />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Service twin</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="ds-rail-icon-button"
+                onClick={() => focusAgentChat()}
+                aria-label="Ask the agent"
+              >
+                <IconMessageCircle className="size-4" strokeWidth={1.8} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Ask the agent</TooltipContent>
+          </Tooltip>
+          {collapseButton}
+        </nav>
+      ) : (
+        <div className="ds-rail-scroll">
+          <ScenarioRail />
+          <div className="ds-rail-chat">
+            <ChatThreadsSection collapsed={false} />
+          </div>
+        </div>
+      )}
+
+      <div className="ds-rail-foot">
         {collapsed ? (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link
-                to="/"
-                aria-label={APP_TITLE}
-                className="flex size-8 items-center justify-center rounded outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+              <button
+                type="button"
+                onClick={openCommandMenu}
+                aria-label={t("root.commandSearch")}
+                className="ds-rail-icon-button"
               >
-                <AgentNativeIcon
-                  aria-hidden="true"
-                  className="h-3.5 w-6 text-sidebar-accent-foreground"
-                />
-              </Link>
+                <IconSearch className="size-4" strokeWidth={1.8} />
+              </button>
             </TooltipTrigger>
-            <TooltipContent side="right">{APP_TITLE}</TooltipContent>
+            <TooltipContent side="right">{t("root.commandSearch")}</TooltipContent>
           </Tooltip>
         ) : (
           <>
-            <Link
-              to="/"
-              className="flex min-w-0 flex-1 items-center gap-3 rounded outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+            <span className="ds-rail-foot-time">Service day · Fri Nov 13</span>
+            <button
+              type="button"
+              onClick={openCommandMenu}
+              aria-label={t("root.commandSearch")}
+              className="ds-rail-icon-button"
             >
-              <AgentNativeIcon
-                aria-hidden="true"
-                className="h-3.5 w-6 shrink-0 text-sidebar-accent-foreground"
-              />
-              <span className="truncate text-sm font-semibold text-sidebar-accent-foreground">
-                {APP_TITLE}
-              </span>
-            </Link>
+              <IconSearch className="size-4" strokeWidth={1.8} />
+            </button>
           </>
         )}
-      </div>
-
-      <nav
-        aria-label={t("navigation.navigation")}
-        className={cn(
-          "flex min-h-0 flex-1 flex-col",
-          collapsed ? "items-center gap-1 px-1 py-2" : "pt-1",
-        )}
-      >
-        <HomeNavLink collapsed={collapsed} />
-        <ChatThreadsSection collapsed={collapsed} />
-      </nav>
-
-      <div className="mt-auto shrink-0 border-t border-sidebar-border p-2">
-        <div
-          className={cn(
-            collapsed
-              ? "flex flex-col items-center gap-1"
-              : "flex items-center gap-0.5",
-          )}
-        >
-          <OrgSwitcher
-            reserveSpace
-            compact={collapsed}
-            currentAppId="chat"
-            className={
-              collapsed
-                ? "size-8 bg-transparent p-0 hover:bg-sidebar-accent"
-                : "min-w-0 flex-1 h-11 rounded-lg bg-transparent px-3 py-2 text-sm text-sidebar-accent-foreground hover:bg-sidebar-accent"
-            }
-          />
-          {searchButton}
-          {collapseButton}
-        </div>
       </div>
     </aside>
   );
