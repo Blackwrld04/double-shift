@@ -4,7 +4,8 @@
 
 ### Autonomous Restaurant Operations Digital Twin: Discrete-Event Service Simulation, Spatial Floor Optimization, Human-in-the-Loop Proposal Engine, Drizzle ORM, and Multi-Provider LLM Intelligence.
 
-[![Live Demo](https://img.shields.io/badge/live_demo-double--shift.vercel.app-F59E0B?style=for-the-badge&logo=vercel&logoColor=white)](https://github.com/Blackwrld04/double-shift)
+[![Live Demo](https://img.shields.io/badge/live_demo-double--shift--one.vercel.app-F59E0B?style=for-the-badge&logo=vercel&logoColor=white)](https://double-shift-one.vercel.app)
+[![Demo Video](https://img.shields.io/badge/demo_video-agent--native_clip-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://clips.agent-native.com/share/RfVBAPYxXJhO?ref=clip_share&via=EmAPdukTHYOgGyPsuV8hFrWmbc2CjVSI)
 [![Build & Tests](https://img.shields.io/badge/tests-21_passing-10B981?style=for-the-badge)](#tests-and-quality-checks)
 [![Simulation: Discrete-Event](https://img.shields.io/badge/simulation-Discrete--Event_Queue_Engine-0284C7?style=for-the-badge)](#pillar-1-discrete-event-simulation--monte-carlo-engine)
 [![Human-in-the-Loop](https://img.shields.io/badge/safety-Human--in--the--Loop_Approval-7C3AED?style=for-the-badge)](#pillar-2-autonomous-operations-agent--staged-proposals)
@@ -19,7 +20,7 @@ Double Shift eliminates the chaos of the Friday 8:00 PM dinner rush. Traditional
 
 **Simulate before you seat. Discover bottlenecks in seconds. Stage human-approved shifts with autonomous AI.**
 
-[🚀 Live Web App](https://github.com/Blackwrld04/double-shift) · [⚡ Service Simulation Lab](#pillar-1-discrete-event-simulation--monte-carlo-engine) · [🗺️ Interactive Floor Plan](#pillar-3-interactive-floor-plan-twin--spatial-operations) · [👥 Staff & Shift Roster](#pillar-4-dynamic-restaurant-onboarding--multi-venue-architecture) · [🤖 Operations Agent](#pillar-2-autonomous-operations-agent--staged-proposals) · [📖 Deployment Blueprint](#production-deployment-matrix)
+[🚀 Live Web App](https://double-shift-one.vercel.app) · [🎬 Video Walkthrough](https://clips.agent-native.com/share/RfVBAPYxXJhO?ref=clip_share&via=EmAPdukTHYOgGyPsuV8hFrWmbc2CjVSI) · [⚡ Service Simulation Lab](#pillar-1-discrete-event-simulation--monte-carlo-engine) · [🗺️ Interactive Floor Plan](#pillar-3-interactive-floor-plan-twin--spatial-operations) · [👥 Staff & Shift Roster](#pillar-4-dynamic-restaurant-onboarding--multi-venue-architecture) · [🤖 Operations Agent](#pillar-2-autonomous-operations-agent--staged-proposals) · [📖 Deployment Blueprint](#production-deployment-matrix)
 
 **Predictive Hospitality Intelligence — Deterministic Queue Simulation, Zero Hallucinated Numbers, and Safe Operational Execution.**
 
@@ -35,6 +36,7 @@ Discrete-Event Simulation · React Router 7 · Vercel AI SDK 6.0 · Agent-Native
 
 | Open / Route | Look for | What it establishes |
 | :--- | :--- | :--- |
+| [🎬 **Video Demo**](https://clips.agent-native.com/share/RfVBAPYxXJhO?ref=clip_share&via=EmAPdukTHYOgGyPsuV8hFrWmbc2CjVSI) | 4-Minute Agent-Native Video Walkthrough | Full end-to-end studio walkthrough: onboarding wizard, live bottleneck detection, AI Operations Copilot layout synthesis, and Monte Carlo rush results. |
 | [🚀 `/home`](file:///home/blackwrld04/Downloads/DoubleShift/app/routes/home.tsx) | Executive Operations Dashboard, KPI Strip & Live Floor Canvas | Comprehensive restaurant twin with P95 wait times, gross revenue, table turn rates, and active section heatmaps. |
 | [⚡ `/home` (Simulation Dock)](file:///home/blackwrld04/Downloads/DoubleShift/app/components/workspace/ServiceDock.tsx) | What-If Scenario Lab & Monte Carlo Batch Runner | Test 10x, 25x, or 50x shift replications, toggle patio weather closures, simulate staff callouts, and inspect kitchen queue depths. |
 | [🗺️ `/home` (Floor Plan Canvas)](file:///home/blackwrld04/Downloads/DoubleShift/app/components/workspace/FloorPlanPanel.tsx) | Interactive 2D Drag-and-Drop Floor Plan | Real-time table status (vacant, seated, dining, dessert, dirty), party capacity indicators (2-top, 4-top, 6-top, 8-top), and section bounds. |
