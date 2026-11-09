@@ -1,4 +1,5 @@
 import { appPath } from "@agent-native/core/client/api-path";
+import { signOut } from "@agent-native/core/client";
 import { useT } from "@agent-native/core/client/i18n";
 import { focusAgentChat } from "@agent-native/toolkit/app/chat";
 import {
@@ -13,15 +14,18 @@ import {
 } from "@agent-native/toolkit/app/chat/ownership-history";
 import { openCommandMenu } from "@agent-native/toolkit/app/shared";
 import {
+  IconBuildingStore,
   IconChevronRight,
   IconLayoutGrid,
   IconLayoutList,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
   IconLoader2,
+  IconLogout,
   IconMessageCircle,
   IconPlus,
   IconSearch,
+  IconUsers,
 } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
@@ -33,7 +37,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useWorkspace } from "@/components/workspace/workspace-context";
-import { money } from "@/components/workspace/format";
+import { formatClockTime, money } from "@/components/workspace/format";
 import { APP_TITLE } from "@/lib/app-config";
 import { chatThreadPath, HOME_PATH, threadIdFromPath } from "@/lib/chat-paths";
 import { cn } from "@/lib/utils";
@@ -272,68 +276,138 @@ function ChatThreadsSection({ collapsed }: { collapsed: boolean }) {
   );
 }
 
-function RailNavLink({
-  to,
-  icon: Icon,
-  label,
-  active,
-}: {
-  to: string;
-  icon: typeof IconLayoutGrid;
-  label: string;
-  active: boolean;
-}) {
+
+function MainNavigation() {
+  const { dockTab, setDockTab, workspace } = useWorkspace();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHome = location.pathname === HOME_PATH;
+  const staged =
+    workspace?.proposals.filter((proposal) => proposal.status === "staged").length ?? 0;
+  const staffCount =
+    workspace?.staff.filter((member) => member.active).length ?? 0;
+
+  function navigateTo(tab: "timeline" | "proposals" | "staff") {
+    setDockTab(tab);
+    if (location.pathname !== HOME_PATH) navigate(HOME_PATH);
+  }
+
   return (
-    <Link
-      to={to}
-      aria-current={active ? "page" : undefined}
-      data-active={active ? "true" : "false"}
-      className="ds-rail-nav-link"
-    >
-      <Icon size={15} stroke={1.8} />
-      <span>{label}</span>
-    </Link>
+    <nav className="ds-rail-nav flex flex-col gap-1 w-full" aria-label="Main Navigation">
+      <button
+        type="button"
+        className="ds-rail-nav-link"
+        data-active={isHome && dockTab === "timeline" ? "true" : "false"}
+        onClick={() => navigateTo("timeline")}
+      >
+        <IconLayoutGrid size={15} stroke={1.8} />
+        <span>Floor Plan</span>
+      </button>
+
+      <button
+        type="button"
+        className="ds-rail-nav-link"
+        data-active={isHome && dockTab === "proposals" ? "true" : "false"}
+        onClick={() => navigateTo("proposals")}
+      >
+        <IconLayoutList size={15} stroke={1.8} />
+        <span>Proposals</span>
+        {staged > 0 ? (
+          <span className="ml-auto text-[9.5px] font-semibold px-1.5 py-0.5 rounded-full bg-white/20 text-white">
+            {staged}
+          </span>
+        ) : null}
+      </button>
+
+      <button
+        type="button"
+        className="ds-rail-nav-link"
+        data-active={isHome && dockTab === "staff" ? "true" : "false"}
+        onClick={() => navigateTo("staff")}
+      >
+        <IconUsers size={15} stroke={1.8} />
+        <span>Team & Staff</span>
+        {staffCount > 0 ? (
+          <span className="ml-auto text-[9.5px] text-neutral-400">
+            {staffCount}
+          </span>
+        ) : null}
+      </button>
+
+      <button
+        type="button"
+        className="ds-rail-nav-link"
+        onClick={() => focusAgentChat()}
+      >
+        <IconMessageCircle size={15} stroke={1.8} />
+        <span>Operations Agent</span>
+        <kbd className="ds-rail-kbd">⌘K</kbd>
+      </button>
+    </nav>
   );
 }
 
 function ScenarioRail() {
   const {
     workspace,
+    selectedScenario,
     selectedScenarioId,
     selectScenario,
-    setDockTab,
     runningScenarioId,
     isLoading,
+    setOpenSetupModal,
   } = useWorkspace();
   const navigate = useNavigate();
   const location = useLocation();
   const [expanded, setExpanded] = useState(true);
   const scenarios = workspace?.scenarios ?? [];
-  const staged = workspace?.proposals.filter((proposal) => proposal.status === "staged").length ?? 0;
 
   function openScenario(scenarioId: string) {
     selectScenario(scenarioId);
     if (location.pathname !== HOME_PATH) navigate(HOME_PATH);
   }
 
-  function openProposals() {
-    setDockTab("proposals");
-    if (location.pathname !== HOME_PATH) navigate(HOME_PATH);
+  if (workspace && workspace.onboarded === false) {
+    return (
+      <div className="ds-rail-product">
+        <div className="ds-rail-venue">
+          <span className="ds-rail-live" style={{ background: "#71717a" }} />
+          <div className="ds-rail-venue-copy">
+            <strong>New Restaurant</strong>
+            <span>Setup required</span>
+          </div>
+        </div>
+        <div className="p-3 text-xs text-neutral-400 leading-relaxed border-t border-neutral-800/60 mt-2">
+          Complete the restaurant setup to configure your dining floor, kitchen stations, and live turn simulation.
+        </div>
+      </div>
+    );
   }
+
+  const activeDemand =
+    workspace?.demandProfiles.find((profile) => profile.id === selectedScenario?.demandProfileId) ??
+    workspace?.demandProfiles[0];
+  const serviceWindow = activeDemand
+    ? `${activeDemand.name} · ${formatClockTime(activeDemand.startTime)}–${formatClockTime(activeDemand.endTime)}`
+    : "Service simulation";
 
   return (
     <div className="ds-rail-product">
       <div className="ds-rail-venue">
         <span className="ds-rail-live" />
         <div className="ds-rail-venue-copy">
-          <strong>Osteria Nove</strong>
-          <span>Friday dinner · 5:00–10:30 PM</span>
+          <strong>{workspace?.venue.name ?? "Restaurant Operations"}</strong>
+          <span>{serviceWindow}</span>
         </div>
-        <span className="ds-rail-venue-tag">live</span>
-      </div>
-
-      <div className="ds-rail-actions">
-        <NavActions />
+        <button
+          type="button"
+          onClick={() => setOpenSetupModal(true)}
+          className="text-neutral-400 hover:text-white transition-colors p-1"
+          title="Restaurant settings & switcher"
+          aria-label="Restaurant settings & switcher"
+        >
+          <IconBuildingStore size={14} stroke={1.8} />
+        </button>
       </div>
 
       <div className="ds-rail-scenario-block">
@@ -344,7 +418,7 @@ function ScenarioRail() {
             aria-expanded={expanded}
             onClick={() => setExpanded((value) => !value)}
           >
-            Scenarios
+            What-If Scenarios
             <span className="ds-rail-count">{scenarios.length}</span>
           </button>
           <button
@@ -403,52 +477,13 @@ function ScenarioRail() {
               </span>
               <span className="ds-rail-scenario-copy">
                 <strong>New what-if</strong>
-                <span>describe a change to test</span>
+                <span>ask agent to test a change</span>
               </span>
             </button>
           </div>
         ) : null}
       </div>
-
-      <button type="button" className="ds-rail-proposals" onClick={openProposals}>
-        <span className="ds-rail-proposals-icon">
-          <IconLayoutList size={15} stroke={1.8} />
-        </span>
-        <span className="ds-rail-proposals-copy">
-          <strong>{staged > 0 ? `${staged} proposal${staged === 1 ? "" : "s"}` : "No proposals"}</strong>
-          <span>{staged > 0 ? "waiting for your approval" : "agent stages, you decide"}</span>
-        </span>
-        {staged > 0 ? <span className="ds-rail-proposals-count">{staged}</span> : <IconChevronRight size={13} />}
-      </button>
-
-      {workspace?.runs[0]?.metrics ? (
-        <div className="ds-rail-profit">
-          <span>Last run net</span>
-          <strong data-negative={workspace.runs[0].metrics.net < 0 ? "true" : "false"}>
-            {money(workspace.runs[0].metrics.net, true)}
-          </strong>
-        </div>
-      ) : null}
     </div>
-  );
-}
-
-function NavActions() {
-  const location = useLocation();
-  return (
-    <>
-      <RailNavLink
-        to={HOME_PATH}
-        icon={IconLayoutGrid}
-        label="Service twin"
-        active={location.pathname === HOME_PATH}
-      />
-      <button type="button" className="ds-rail-nav-link" onClick={() => focusAgentChat()}>
-        <IconMessageCircle size={15} stroke={1.8} />
-        <span>Ask the agent</span>
-        <kbd className="ds-rail-kbd">⌘K</kbd>
-      </button>
-    </>
   );
 }
 
@@ -458,6 +493,31 @@ export function Sidebar({
   onCollapsedChange,
 }: SidebarProps) {
   const t = useT();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { workspace, selectedScenario, setOpenSetupModal, setDockTab } = useWorkspace();
+  const staged =
+    workspace?.proposals.filter((proposal) => proposal.status === "staged").length ?? 0;
+  if (workspace && workspace.onboarded === false) {
+    return (
+      <div className="ds-rail-product">
+        <div className="ds-rail-venue">
+          <span className="ds-rail-live" style={{ background: "#71717a" }} />
+          <div className="ds-rail-venue-copy">
+            <strong>New Restaurant</strong>
+            <span>Setup required</span>
+          </div>
+        </div>
+        <div className="p-3 text-xs text-neutral-400 leading-relaxed border-t border-neutral-800/60 mt-2">
+          Complete the restaurant setup to configure your dining floor, kitchen stations, and live turn simulation.
+        </div>
+      </div>
+    );
+  }
+
+  const activeDemand =
+    workspace?.demandProfiles.find((profile) => profile.id === selectedScenario?.demandProfileId) ??
+    workspace?.demandProfiles[0];
   const ToggleIcon = collapsed
     ? IconLayoutSidebarLeftExpand
     : IconLayoutSidebarLeftCollapse;
@@ -513,12 +573,57 @@ export function Sidebar({
         <nav className="ds-rail-collapsed-nav" aria-label={t("navigation.navigation")}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link to={HOME_PATH} className="ds-rail-icon-button" aria-label="Service twin">
+              <button
+                type="button"
+                className="ds-rail-icon-button"
+                onClick={() => {
+                  setDockTab("timeline");
+                  if (location.pathname !== HOME_PATH) navigate(HOME_PATH);
+                }}
+                aria-label="Floor Plan"
+              >
                 <IconLayoutGrid className="size-4" strokeWidth={1.8} />
-              </Link>
+              </button>
             </TooltipTrigger>
-            <TooltipContent side="right">Service twin</TooltipContent>
+            <TooltipContent side="right">Floor Plan</TooltipContent>
           </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="ds-rail-icon-button"
+                onClick={() => {
+                  setDockTab("proposals");
+                  if (location.pathname !== HOME_PATH) navigate(HOME_PATH);
+                }}
+                aria-label="Proposals"
+              >
+                <IconLayoutList className="size-4" strokeWidth={1.8} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              Proposals {staged > 0 ? `(${staged})` : ""}
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="ds-rail-icon-button"
+                onClick={() => {
+                  setDockTab("staff");
+                  if (location.pathname !== HOME_PATH) navigate(HOME_PATH);
+                }}
+                aria-label="Team & Staff"
+              >
+                <IconUsers className="size-4" strokeWidth={1.8} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Team & Staff</TooltipContent>
+          </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <button
@@ -530,12 +635,15 @@ export function Sidebar({
                 <IconMessageCircle className="size-4" strokeWidth={1.8} />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="right">Ask the agent</TooltipContent>
+            <TooltipContent side="right">Operations Agent</TooltipContent>
           </Tooltip>
           {collapseButton}
         </nav>
       ) : (
         <div className="ds-rail-scroll">
+          <div className="ds-rail-actions">
+            <MainNavigation />
+          </div>
           <ScenarioRail />
           <div className="ds-rail-chat">
             <ChatThreadsSection collapsed={false} />
@@ -545,8 +653,47 @@ export function Sidebar({
 
       <div className="ds-rail-foot">
         {collapsed ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
+          <div className="flex flex-col items-center gap-1">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={openCommandMenu}
+                  aria-label={t("root.commandSearch")}
+                  className="ds-rail-icon-button"
+                >
+                  <IconSearch className="size-4" strokeWidth={1.8} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">{t("root.commandSearch")}</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={() => void signOut()}
+                  aria-label="Log out"
+                  className="ds-rail-icon-button"
+                >
+                  <IconLogout className="size-4" strokeWidth={1.8} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">Log out</TooltipContent>
+            </Tooltip>
+          </div>
+        ) : (
+          <>
+            <span className="ds-rail-foot-time">{activeDemand?.name ?? "Service simulation"}</span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setOpenSetupModal(true)}
+                title="Restaurant settings & switcher"
+                aria-label="Restaurant settings"
+                className="ds-rail-icon-button"
+              >
+                <IconBuildingStore className="size-4" strokeWidth={1.8} />
+              </button>
               <button
                 type="button"
                 onClick={openCommandMenu}
@@ -555,20 +702,16 @@ export function Sidebar({
               >
                 <IconSearch className="size-4" strokeWidth={1.8} />
               </button>
-            </TooltipTrigger>
-            <TooltipContent side="right">{t("root.commandSearch")}</TooltipContent>
-          </Tooltip>
-        ) : (
-          <>
-            <span className="ds-rail-foot-time">Service day · Fri Nov 13</span>
-            <button
-              type="button"
-              onClick={openCommandMenu}
-              aria-label={t("root.commandSearch")}
-              className="ds-rail-icon-button"
-            >
-              <IconSearch className="size-4" strokeWidth={1.8} />
-            </button>
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                title="Log out"
+                aria-label="Log out"
+                className="ds-rail-icon-button"
+              >
+                <IconLogout className="size-4" strokeWidth={1.8} />
+              </button>
+            </div>
           </>
         )}
       </div>

@@ -5,8 +5,11 @@ import { createAgentNativeQueryClient } from "@agent-native/core/client/hooks";
 import { getLocaleInitScript, useT } from "@agent-native/core/client/i18n";
 import { getThemeInitScript } from "@agent-native/core/client/theme";
 import { AppProviders } from "@agent-native/toolkit/app/providers";
-import { useCommandMenuShortcut } from "@agent-native/toolkit/app/shared";
-import { CommandMenu } from "@agent-native/toolkit/app/shared";
+import {
+  ClientOnly,
+  CommandMenu,
+  useCommandMenuShortcut,
+} from "@agent-native/toolkit/app/shared";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import { useCallback, useState } from "react";
@@ -175,20 +178,26 @@ function AppContent() {
   );
 }
 
+const PUBLIC_PATHS = ["/", "/sign-in", "/login"];
+
 export default function Root() {
   const [queryClient] = useState(() => createAgentNativeQueryClient());
   // The path, not the visitor, picks the shell, so the SSR shell stays one
   // cached page per URL.
   const { pathname } = useLocation();
+  const isPublicPath = PUBLIC_PATHS.includes(pathname);
   return (
     <AppToolkitProvider>
       <AppProviders
         queryClient={queryClient}
+        isPublicPath={isPublicPath}
         skeletonLayout={skeletonLayoutForPath(pathname)}
         defaultTheme="dark"
         i18n={{ catalog: i18nCatalog }}
       >
-        <DbSyncSetup />
+        <ClientOnly>
+          <DbSyncSetup />
+        </ClientOnly>
         <AppContent />
       </AppProviders>
     </AppToolkitProvider>

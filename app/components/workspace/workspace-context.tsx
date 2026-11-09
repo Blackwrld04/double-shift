@@ -34,6 +34,7 @@ export type RunView = {
   scenarioName: string;
   createdAt?: string;
   replications: number;
+  seed?: number;
   metrics: RunMetrics;
   timeline: TimelinePoint[];
   events: RunEvent[];
@@ -60,6 +61,8 @@ type WorkspaceContextValue = {
   runningScenarioId: string | null;
   runScenario: (scenarioId: string, replications?: number) => Promise<LiveRun>;
   baselineMetrics: RunMetrics | undefined;
+  openSetupModal: boolean;
+  setOpenSetupModal: (open: boolean) => void;
 };
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
@@ -74,6 +77,7 @@ function toRunView(data: RunDetail | undefined): RunView | undefined {
     scenarioName: data.run.scenarioName,
     createdAt: data.run.createdAt,
     replications: data.run.replications,
+    seed: data.run.seed,
     metrics: data.metrics,
     timeline: data.timeline,
     events: data.events,
@@ -87,6 +91,7 @@ function toLiveRunView(data: LiveRun | null): RunView | undefined {
     scenarioId: data.scenarioId,
     scenarioName: data.scenarioName,
     replications: data.metrics.replications ?? 25,
+    seed: data.representativeSeed,
     metrics: data.metrics,
     timeline: data.timeline,
     events: data.events,
@@ -105,6 +110,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [replications, setReplications] = useState(25);
   const [liveRun, setLiveRun] = useState<LiveRun | null>(null);
   const [runningScenarioId, setRunningScenarioId] = useState<string | null>(null);
+  const [openSetupModal, setOpenSetupModal] = useState(false);
   const autoRunStarted = useRef(false);
   const lastAppliedContext = useRef<string | null>(null);
 
@@ -256,6 +262,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     runningScenarioId,
     runScenario,
     baselineMetrics: baseline?.latestRun?.metrics,
+    openSetupModal,
+    setOpenSetupModal,
   };
 
   return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;

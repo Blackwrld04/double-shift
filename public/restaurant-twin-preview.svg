@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 560" width="100%" height="100%" fill="none">
+  <defs>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#131316"/>
+      <stop offset="100%" stop-color="#0a0a0c"/>
+    </linearGradient>
+    <linearGradient id="kitchenBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a20"/>
+      <stop offset="100%" stop-color="#121216"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="760" height="560" rx="16" fill="url(#cardBg)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+  <rect width="760" height="560" rx="16" fill="url(#grid)"/>
+
+  <!-- Top Shift Status Bar -->
+  <g transform="translate(24, 20)">
+    <rect width="712" height="44" rx="10" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <!-- Live Pulse -->
+    <circle cx="24" cy="22" r="5" fill="#22c55e"/>
+    <circle cx="24" cy="22" r="9" stroke="#22c55e" stroke-width="1" opacity="0.4"/>
+    <text x="42" y="26" fill="#ffffff" font-family="Geist, -apple-system, sans-serif" font-size="12" font-weight="600" letter-spacing="0.5">DINNER SHIFT SIMULATION • LIVE TWIN</text>
+    
+    <!-- Badges -->
+    <rect x="360" y="10" width="92" height="24" rx="6" fill="rgba(255,255,255,0.06)"/>
+    <text x="406" y="26" text-anchor="middle" fill="#e4e4e7" font-family="Geist, monospace" font-size="11" font-weight="500">52 / 64 COVERS</text>
+
+    <rect x="460" y="10" width="100" height="24" rx="6" fill="rgba(255,255,255,0.06)"/>
+    <text x="510" y="26" text-anchor="middle" fill="#e4e4e7" font-family="Geist, monospace" font-size="11" font-weight="500">TURNS: 1.8x (AVG)</text>
+
+    <rect x="568" y="10" width="132" height="24" rx="6" fill="rgba(255,255,255,0.06)"/>
+    <text x="634" y="26" text-anchor="middle" fill="#e4e4e7" font-family="Geist, monospace" font-size="11" font-weight="500">WAITLIST: 3 PARTIES</text>
+  </g>
+
+  <!-- Section 1: Main Dining Room -->
+  <g transform="translate(24, 80)">
+    <!-- Zone Boundary Box -->
+    <rect width="460" height="300" rx="12" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4 4"/>
+    <text x="16" y="24" fill="#a1a1aa" font-family="Geist, -apple-system, sans-serif" font-size="11" font-weight="600" letter-spacing="1">MAIN ROOM • 36 SEATS</text>
+
+    <!-- Table T01 (Round 4p - Occupied) -->
+    <g transform="translate(80, 95)">
+      <!-- Chairs -->
+      <circle cx="0" cy="-38" r="9" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)"/>
+      <circle cx="0" cy="38" r="9" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)"/>
+      <circle cx="-38" cy="0" r="9" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)"/>
+      <circle cx="38" cy="0" r="9" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)"/>
+      <!-- Table top -->
+      <circle cx="0" cy="0" r="28" fill="#1c1c22" stroke="#3b82f6" stroke-width="2"/>
+      <text x="0" y="-4" text-anchor="middle" fill="#ffffff" font-family="Geist, sans-serif" font-size="11" font-weight="600">T01</text>
+      <text x="0" y="10" text-anchor="middle" fill="#60a5fa" font-family="Geist, monospace" font-size="9">4p • 38m</text>
+      <!-- Subtitle badge -->
+      <rect x="-35" y="48" width="70" height="16" rx="4" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.4)"/>
+      <text x="0" y="60" text-anchor="middle" fill="#93c5fd" font-family="Geist, sans-serif" font-size="9">Mains In</text>
+    </g>
+
+    <!-- Table T02 (Square 4p - Occupied) -->
+    <g transform="translate(230, 95)">
+      <rect x="-8" y="-38" width="16" height="10" rx="3" fill="rgba(255,255,255,0.12)"/>
+      <rect x="-8" y="28" width="16" height="10" rx="3" fill="rgba(255,255,255,0.12)"/>
+      <rect x="-38" y="-8" width="10" height="16" rx="3" fill="rgba(255,255,255,0.12)"/>
+      <rect x="28" y="-8" width="10" height="16" rx="3" fill="rgba(255,255,255,0.12)"/>
+      <rect x="-25" y="-25" width="50" height="50" rx="8" fill="#1c1c22" stroke="#3b82f6" stroke-width="2"/>
+      <text x="0" y="-4" text-anchor="middle" fill="#ffffff" font-family="Geist, sans-serif" font-size="11" font-weight="600">T02</text>
+      <text x="0" y="10" text-anchor="middle" fill="#60a5fa" font-family="Geist, monospace" font-size="9">4p • 14m</text>
+      <rect x="-35" y="48" width="70" height="16" rx="4" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.4)"/>
+      <text x="0" y="60" text-anchor="middle" fill="#93c5fd" font-family="Geist, sans-serif" font-size="9">Appetizers</text>
+    </g>
+
+    <!-- Table T03 (Round 2p - Available) -->
+    <g transform="translate(370, 95)">
+      <circle cx="-30" cy="0" r="8" fill="rgba(255,255,255,0.08)"/>
+      <circle cx="30" cy="0" r="8" fill="rgba(255,255,255,0.08)"/>
+      <circle cx="0" cy="0" r="22" fill="#1c1c22" stroke="#22c55e" stroke-width="2"/>
+      <text x="0" y="-3" text-anchor="middle" fill="#ffffff" font-family="Geist, sans-serif" font-size="10" font-weight="600">T03</text>
+      <text x="0" y="9" text-anchor="middle" fill="#86efac" font-family="Geist, monospace" font-size="9">2p • Open</text>
+      <rect x="-30" y="48" width="60" height="16" rx="4" fill="rgba(34,197,94,0.15)" stroke="rgba(34,197,94,0.4)"/>
+      <text x="0" y="60" text-anchor="middle" fill="#86efac" font-family="Geist, sans-serif" font-size="9">Available</text>
+    </g>
+
+    <!-- Table T04 (Long Banquet 6p - Reserved) -->
+    <g transform="translate(120, 220)">
+      <!-- 6 Chairs -->
+      <circle cx="-40" cy="-28" r="8" fill="rgba(255,255,255,0.1)"/>
+      <circle cx="0" cy="-28" r="8" fill="rgba(255,255,255,0.1)"/>
+      <circle cx="40" cy="-28" r="8" fill="rgba(255,255,255,0.1)"/>
+      <circle cx="-40" cy="28" r="8" fill="rgba(255,255,255,0.1)"/>
+      <circle cx="0" cy="28" r="8" fill="rgba(255,255,255,0.1)"/>
+      <circle cx="40" cy="28" r="8" fill="rgba(255,255,255,0.1)"/>
+      <rect x="-60" y="-18" width="120" height="36" rx="6" fill="#1c1c22" stroke="#eab308" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <text x="0" y="-2" text-anchor="middle" fill="#ffffff" font-family="Geist, sans-serif" font-size="10" font-weight="600">T04 • 6p</text>
+      <text x="0" y="10" text-anchor="middle" fill="#fde047" font-family="Geist, monospace" font-size="8.5">Reserved 19:45</text>
+    </g>
+
+    <!-- Table T05 (Booth 4p - Check Dropped) -->
+    <g transform="translate(320, 220)">
+      <!-- Booth backrest -->
+      <path d="M -45 -22 L 45 -22" stroke="rgba(255,255,255,0.3)" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <path d="M -45 22 L 45 22" stroke="rgba(255,255,255,0.3)" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <rect x="-35" y="-14" width="70" height="28" rx="5" fill="#1c1c22" stroke="#a855f7" stroke-width="2"/>
+      <text x="0" y="-1" text-anchor="middle" fill="#ffffff" font-family="Geist, sans-serif" font-size="10" font-weight="600">T05 • Booth</text>
+      <text x="0" y="10" text-anchor="middle" fill="#d8b4fe" font-family="Geist, monospace" font-size="8.5">Turn ~5m</text>
+    </g>
+  </g>
+
+  <!-- Section 2: Kitchen Expedite & Station Pass -->
+  <g transform="translate(500, 80)">
+    <rect width="236" height="300" rx="12" fill="url(#kitchenBg)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+    <rect x="0" y="0" width="236" height="32" rx="12" fill="rgba(255,255,255,0.04)"/>
+    <text x="16" y="21" fill="#e4e4e7" font-family="Geist, -apple-system, sans-serif" font-size="11" font-weight="600" letter-spacing="0.5">KITCHEN EXPEDITE PASS</text>
+
+    <!-- Station 1: Grill -->
+    <g transform="translate(16, 48)">
+      <rect width="204" height="48" rx="8" fill="rgba(0,0,0,0.3)" stroke="rgba(255,255,255,0.06)"/>
+      <text x="12" y="20" fill="#ffffff" font-family="Geist, sans-serif" font-size="11" font-weight="600">Grill Station</text>
+      <text x="12" y="36" fill="#a1a1aa" font-family="Geist, sans-serif" font-size="9.5">Avg Fire: 14m</text>
+      <!-- Ticket Queue Pill -->
+      <rect x="136" y="12" width="56" height="24" rx="5" fill="rgba(239,68,68,0.2)" stroke="rgba(239,68,68,0.5)"/>
+      <text x="164" y="28" text-anchor="middle" fill="#fca5a5" font-family="Geist, monospace" font-size="10" font-weight="600">3 TKTS</text>
+    </g>
+
+    <!-- Station 2: Saute -->
+    <g transform="translate(16, 108)">
+      <rect width="204" height="48" rx="8" fill="rgba(0,0,0,0.3)" stroke="rgba(255,255,255,0.06)"/>
+      <text x="12" y="20" fill="#ffffff" font-family="Geist, sans-serif" font-size="11" font-weight="600">Sauté Station</text>
+      <text x="12" y="36" fill="#a1a1aa" font-family="Geist, sans-serif" font-size="9.5">Avg Fire: 9m</text>
+      <rect x="136" y="12" width="56" height="24" rx="5" fill="rgba(234,179,8,0.2)" stroke="rgba(234,179,8,0.5)"/>
+      <text x="164" y="28" text-anchor="middle" fill="#fef08a" font-family="Geist, monospace" font-size="10" font-weight="600">2 TKTS</text>
+    </g>
+
+    <!-- Station 3: Fry -->
+    <g transform="translate(16, 168)">
+      <rect width="204" height="48" rx="8" fill="rgba(0,0,0,0.3)" stroke="rgba(255,255,255,0.06)"/>
+      <text x="12" y="20" fill="#ffffff" font-family="Geist, sans-serif" font-size="11" font-weight="600">Fry Station</text>
+      <text x="12" y="36" fill="#a1a1aa" font-family="Geist, sans-serif" font-size="9.5">Avg Fire: 5m</text>
+      <rect x="136" y="12" width="56" height="24" rx="5" fill="rgba(34,197,94,0.15)" stroke="rgba(34,197,94,0.4)"/>
+      <text x="164" y="28" text-anchor="middle" fill="#86efac" font-family="Geist, monospace" font-size="10" font-weight="600">1 TKT</text>
+    </g>
+
+    <!-- Station 4: Cold / Pantry -->
+    <g transform="translate(16, 228)">
+      <rect width="204" height="48" rx="8" fill="rgba(0,0,0,0.3)" stroke="rgba(255,255,255,0.06)"/>
+      <text x="12" y="20" fill="#ffffff" font-family="Geist, sans-serif" font-size="11" font-weight="600">Pantry / Cold</text>
+      <text x="12" y="36" fill="#a1a1aa" font-family="Geist, sans-serif" font-size="9.5">Avg Fire: 4m</text>
+      <rect x="136" y="12" width="56" height="24" rx="5" fill="rgba(255,255,255,0.06)"/>
+      <text x="164" y="28" text-anchor="middle" fill="#a1a1aa" font-family="Geist, monospace" font-size="10" font-weight="500">CLEAR</text>
+    </g>
+  </g>
+
+  <!-- Section 3: Bottom Operations Capabilities -->
+  <g transform="translate(24, 396)">
+    <rect width="712" height="140" rx="12" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)"/>
+    
+    <!-- Capability 1 -->
+    <g transform="translate(20, 20)">
+      <rect width="214" height="100" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)"/>
+      <circle cx="24" cy="24" r="10" fill="rgba(59,130,246,0.15)"/>
+      <text x="24" y="28" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="bold">⤹</text>
+      <text x="44" y="28" fill="#ffffff" font-family="Geist, sans-serif" font-size="11" font-weight="600">Spatial Floor Plan</text>
+      <text x="16" y="54" fill="#a1a1aa" font-family="Geist, sans-serif" font-size="9.5">Add, remove, and reposition tables with real-time seat capacities &amp; section balance.</text>
+    </g>
+
+    <!-- Capability 2 -->
+    <g transform="translate(249, 20)">
+      <rect width="214" height="100" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)"/>
+      <circle cx="24" cy="24" r="10" fill="rgba(168,85,247,0.15)"/>
+      <text x="24" y="28" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="bold">⏱</text>
+      <text x="44" y="28" fill="#ffffff" font-family="Geist, sans-serif" font-size="11" font-weight="600">Table Turns &amp; Pacing</text>
+      <text x="16" y="54" fill="#a1a1aa" font-family="Geist, sans-serif" font-size="9.5">Model course transitions (Apps, Mains, Dessert) and turnover probabilities.</text>
+    </g>
+
+    <!-- Capability 3 -->
+    <g transform="translate(478, 20)">
+      <rect width="214" height="100" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)"/>
+      <circle cx="24" cy="24" r="10" fill="rgba(34,197,94,0.15)"/>
+      <text x="24" y="28" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="bold">⚡</text>
+      <text x="44" y="28" fill="#ffffff" font-family="Geist, sans-serif" font-size="11" font-weight="600">Agentic Twin Simulation</text>
+      <text x="16" y="54" fill="#a1a1aa" font-family="Geist, sans-serif" font-size="9.5">AI agent simulates rush scenarios, table reassignments, and kitchen load relief.</text>
+    </g>
+  </g>
+</svg>

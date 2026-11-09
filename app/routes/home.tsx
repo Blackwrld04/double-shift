@@ -1,5 +1,6 @@
 import {
   IconAlertTriangle,
+  IconBuildingStore,
   IconClock,
   IconFlame,
   IconLayoutGrid,
@@ -10,14 +11,16 @@ import { useMemo } from "react";
 
 import { FloorPlanPanel } from "@/components/workspace/FloorPlanPanel";
 import { KpiStrip } from "@/components/workspace/KpiStrip";
+import { OnboardingSetupScreen } from "@/components/workspace/OnboardingSetupScreen";
 import { ServiceDock } from "@/components/workspace/ServiceDock";
-import { minutes, money, runAge, sectionStyle } from "@/components/workspace/format";
+import { VenueOnboardingModal } from "@/components/workspace/VenueOnboardingModal";
+import { formatClockTime, runAge } from "@/components/workspace/format";
 import { useWorkspace } from "@/components/workspace/workspace-context";
 import { APP_TITLE } from "@/lib/app-config";
 
-const SEO_TITLE = `${APP_TITLE}: Friday service simulator`;
+const SEO_TITLE = `${APP_TITLE}: restaurant operations twin`;
 const SEO_DESCRIPTION =
-  "Simulate a Friday dinner service at Osteria Nove. Test staffing, floor layout and demand over 10 to 50 simulated services, then apply only the changes you approve.";
+  "Simulate restaurant service. Test staffing, floor layout and demand over 10 to 50 simulated services, then apply only the changes you approve.";
 
 export function meta() {
   return [
@@ -32,47 +35,7 @@ export function meta() {
 }
 
 export default function HomeRoute() {
-  return <WorkspacePage />;
-}
-
-function WorkspacePage() {
-  const {
-    workspace,
-    isLoading,
-    error,
-    selectedScenario,
-    selectedScenarioId,
-    run,
-    replications,
-    setReplications,
-    runScenario,
-    runningScenarioId,
-    baselineMetrics,
-  } = useWorkspace();
-
-  const metrics = run?.metrics ?? selectedScenario?.latestRun?.metrics;
-  const isRunning = runningScenarioId === selectedScenarioId && Boolean(runningScenarioId);
-  const tables = workspace?.tables ?? [];
-  const sections = workspace?.sections ?? [];
-  const staff = workspace?.staff ?? [];
-  const stations = workspace?.stations ?? [];
-
-  const tags = useMemo(() => {
-    if (!selectedScenario) return [];
-    const list = [
-      selectedScenario.demandMultiplier !== 1
-        ? `${selectedScenario.demandMultiplier.toFixed(2)}× demand`
-        : "1.0× demand",
-      selectedScenario.patioClosed ? "patio closed" : "full floor",
-      selectedScenario.callouts.length > 0
-        ? `${selectedScenario.callouts.length} callout${selectedScenario.callouts.length === 1 ? "" : "s"}`
-        : "full team",
-    ];
-    if (selectedScenario.changes.length > 0) {
-      list.push(`${selectedScenario.changes.length} staged change${selectedScenario.changes.length === 1 ? "" : "s"}`);
-    }
-    return list;
-  }, [selectedScenario]);
+  const { workspace, isLoading, error } = useWorkspace();
 
   if (isLoading && !workspace) {
     return (
@@ -104,27 +67,85 @@ function WorkspacePage() {
     );
   }
 
-  const worstSection = metrics?.sectionWaits?.[0];
-  const netTone = (metrics?.net ?? 0) >= 0 ? "good" : "bad";
-  const deltaNet =
-    metrics && baselineMetrics ? metrics.net - baselineMetrics.net : undefined;
+  // When a user has not onboarded yet, show the "Set Up Your Restaurant" screen instead of fixed data
+  if (workspace && workspace.onboarded === false) {
+    return <OnboardingSetupScreen />;
+  }
+
+  return <WorkspacePage />;
+}
+
+function WorkspacePage() {
+  const {
+    workspace,
+    selectedScenario,
+    selectedScenarioId,
+    run,
+    replications,
+    setReplications,
+    runScenario,
+    runningScenarioId,
+    baselineMetrics,
+    setOpenSetupModal,
+  } = useWorkspace();
+
+  const metrics = run?.metrics ?? selectedScenario?.latestRun?.metrics;
+  const isRunning = runningScenarioId === selectedScenarioId && Boolean(runningScenarioId);
+  const tables = workspace?.tables ?? [];
+  const sections = workspace?.sections ?? [];
+  const staff = workspace?.staff ?? [];
+  const stations = workspace?.stations ?? [];
+
+  const tags = useMemo(() => {
+    if (!selectedScenario) return [];
+    const list = [
+      selectedScenario.demandMultiplier !== 1
+        ? `${selectedScenario.demandMultiplier.toFixed(2)}× demand`
+        : "1.0× demand",
+      selectedScenario.patioClosed ? "patio closed" : "full floor",
+      selectedScenario.callouts.length > 0
+        ? `${selectedScenario.callouts.length} callout${selectedScenario.callouts.length === 1 ? "" : "s"}`
+        : "full team",
+    ];
+    if (selectedScenario.changes.length > 0) {
+      list.push(`${selectedScenario.changes.length} staged change${selectedScenario.changes.length === 1 ? "" : "s"}`);
+    }
+    return list;
+  }, [selectedScenario]);
+
+  const activeDemand =
+    workspace?.demandProfiles.find((profile) => profile.id === selectedScenario?.demandProfileId) ??
+    workspace?.demandProfiles[0];
+  const venueName = workspace?.venue.name ?? "Restaurant Operations Twin";
+  const serviceName = activeDemand?.name ?? "Service simulation";
+  const serviceWindow = activeDemand
+    ? `${formatClockTime(activeDemand.startTime)}–${formatClockTime(activeDemand.endTime)}`
+    : "5:00 PM–10:30 PM";
 
   return (
     <div className="ds-workspace">
+      <VenueOnboardingModal />
       <header className="ds-hero">
         <div className="ds-hero-main">
           <div className="ds-eyebrow">
-            Friday dinner service
+            {serviceName}
             <span className="ds-eyebrow-divider" />
-            Nov 13 · 5:00–10:30 PM
+            {serviceWindow}
           </div>
-          <h1 className="ds-hero-title">
-            Osteria Nove
-          </h1>
-          <p className="ds-hero-copy">
-            Change the floor plan, the roster or demand and see what it does to waits,
-            walkouts and net. Nothing goes live until you apply it.
-          </p>
+          <div className="flex items-center gap-3">
+            <h1 className="ds-hero-title">
+              {venueName}
+            </h1>
+            <button
+              type="button"
+              onClick={() => setOpenSetupModal(true)}
+              className="text-xs px-2.5 py-1 rounded border border-neutral-800 bg-neutral-900/80 text-neutral-300 hover:text-white hover:border-neutral-600 transition-colors inline-flex items-center gap-1.5"
+              title="Configure restaurant or switch between custom and demo venue"
+            >
+              <IconBuildingStore size={13} stroke={1.8} />
+              <span>Settings / Switch</span>
+            </button>
+          </div>
           <div className="ds-hero-meta">
             <span>
               <IconLayoutGrid size={13} stroke={1.8} />
@@ -138,7 +159,6 @@ function WorkspacePage() {
               <IconFlame size={13} stroke={1.8} />
               {stations.length} kitchen stations
             </span>
-            <span className="ds-hero-seed">seed 20261109</span>
           </div>
         </div>
 
@@ -155,10 +175,6 @@ function WorkspacePage() {
                 <span className="ds-badge ds-badge-accent">what-if</span>
               )}
             </div>
-            <p className="ds-scenario-card-copy">
-              {selectedScenario?.description ||
-                "A normal Friday at Osteria Nove. Use it as the control against every what-if."}
-            </p>
             <div className="ds-scenario-tags">
               {tags.map((tag) => (
                 <span key={tag}>{tag}</span>
@@ -211,63 +227,12 @@ function WorkspacePage() {
         </div>
       </header>
 
-      <div className="ds-summary-line">
-        <div className="ds-summary-item">
-          <span className="ds-summary-label">Net on the night</span>
-          <strong data-tone={netTone}>{money(metrics?.net, true)}</strong>
-          {deltaNet !== undefined && Math.abs(deltaNet) >= 1 ? (
-            <em data-tone={deltaNet >= 0 ? "good" : "bad"}>
-              {deltaNet >= 0 ? "+" : "−"}
-              {money(Math.abs(deltaNet), true)} vs baseline
-            </em>
-          ) : (
-            <em>after labor & overtime</em>
-          )}
-        </div>
-        <div className="ds-summary-divider" />
-        <div className="ds-summary-item">
-          <span className="ds-summary-label">Guest experience</span>
-          <strong>{minutes(metrics?.avgWait, 1)} avg wait</strong>
-          <em>P95 {minutes(metrics?.p95Wait)} · {Math.round(metrics?.walkouts ?? 0)} walkouts</em>
-        </div>
-        <div className="ds-summary-divider" />
-        <div className="ds-summary-item">
-          <span className="ds-summary-label">Floor pressure</span>
-          <strong>
-            {worstSection ? `${worstSection.sectionName} ${minutes(worstSection.p95Wait)}` : "—"}
-          </strong>
-          <em>
-            {metrics?.bottleneck ? `${metrics.bottleneck} queued ${minutes(metrics.stationLoad?.[0]?.maxQueue ?? 0)}` : "waiting for a run"}
-          </em>
-        </div>
-        <div className="ds-summary-spacer" />
-        <div className="ds-summary-hint">
-          The agent can simulate and stage. You approve every live change.
-        </div>
-      </div>
-
       <KpiStrip />
 
       <div className="ds-workspace-grid">
         <FloorPlanPanel />
         <ServiceDock />
       </div>
-
-      <footer className="ds-workspace-foot">
-        <span>
-          <span className="ds-foot-dot" />
-          Seeded simulation: same inputs give the same result
-        </span>
-        <span>
-          {sections.map((section) => (
-            <span key={section.id} className="ds-foot-section">
-              <span className="ds-foot-swatch" style={{ background: sectionStyle(section.id).color }} />
-              {section.name}
-            </span>
-          ))}
-        </span>
-        <span className="ds-foot-rule">Human approval required for live changes</span>
-      </footer>
     </div>
   );
 }

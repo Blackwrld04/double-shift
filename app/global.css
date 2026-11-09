@@ -1324,6 +1324,7 @@ body {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 1px;
+  margin: 14px 0;
   overflow: hidden;
   border: 1px solid var(--ds-line);
   border-radius: 14px;

@@ -5,6 +5,7 @@ import {
   IconFlame,
   IconMinus,
   IconPlus,
+  IconTrash,
 } from "@tabler/icons-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -124,7 +125,11 @@ export function FloorPlanPanel() {
   const previewRef = useRef<{ id: string; x: number; y: number } | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  const updateTable = useActionMutation("update-table", { uiOnly: true });
+  const updateTable = useActionMutation("update-table");
+  const addTable = useActionMutation("add-table");
+  const removeTable = useActionMutation("remove-table");
+  const [isAdding, setIsAdding] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const statsByTable = useMemo(() => {
     const map = new Map<string, TableStat>();
@@ -233,6 +238,37 @@ export function FloorPlanPanel() {
       .catch(() => undefined);
   }
 
+  async function handleAddTable() {
+    try {
+      setIsAdding(true);
+      const res = await addTable.mutateAsync({
+        seats: 4,
+        shape: "rect",
+      });
+      await refresh();
+      if (res?.table?.id) {
+        selectTable(res.table.id);
+      }
+    } catch (err) {
+      console.error("Failed to add table:", err);
+    } finally {
+      setIsAdding(false);
+    }
+  }
+
+  async function handleRemoveTable(tableId: string) {
+    try {
+      setIsRemoving(true);
+      await removeTable.mutateAsync({ tableId });
+      selectTable(null);
+      await refresh();
+    } catch (err) {
+      console.error("Failed to remove table:", err);
+    } finally {
+      setIsRemoving(false);
+    }
+  }
+
   const selectedStat = selectedTable ? statsByTable.get(selectedTable.id) : undefined;
   const sectionServers = selectedTable?.sectionId
     ? staff.filter(
@@ -254,6 +290,16 @@ export function FloorPlanPanel() {
           <button
             type="button"
             className="ds-toggle"
+            disabled={isAdding}
+            onClick={() => handleAddTable()}
+            aria-label="Add table"
+          >
+            <IconPlus size={14} stroke={1.8} />
+            <span>{isAdding ? "Adding..." : "Add table"}</span>
+          </button>
+          <button
+            type="button"
+            className="ds-toggle"
             data-active={heatmap ? "true" : "false"}
             onClick={() => setHeatmap(!heatmap)}
           >
@@ -272,7 +318,7 @@ export function FloorPlanPanel() {
           viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
           className="ds-floor-svg"
           role="img"
-          aria-label="Osteria Nove floor plan"
+          aria-label={`${workspace?.venue.name ?? "Restaurant"} floor plan`}
           onPointerDown={() => selectTable(null)}
         >
           <defs>
@@ -511,6 +557,16 @@ export function FloorPlanPanel() {
             <button type="button" className="ds-ghost-button" onClick={() => toggleActive(selectedTable)}>
               {selectedTable.active ? "Take offline" : "Activate"}
             </button>
+            <button
+              type="button"
+              className="ds-ghost-button"
+              disabled={isRemoving}
+              onClick={() => handleRemoveTable(selectedTable.id)}
+              aria-label="Remove table"
+            >
+              <IconTrash size={13} stroke={1.8} />
+              <span>{isRemoving ? "Removing..." : "Remove table"}</span>
+            </button>
             <button type="button" className="ds-accent-button" onClick={() => focusAgentChat()}>
               Ask the agent
             </button>
@@ -519,12 +575,8 @@ export function FloorPlanPanel() {
       ) : (
         <div className="ds-floor-emptybar">
           <span>
-            <IconArrowsMove size={14} stroke={1.8} /> Select a table to inspect its simulated service. Drag it to
-            rearrange the live floor.
+            <IconArrowsMove size={14} stroke={1.8} /> Click a table to inspect its stats or drag to reposition. Use “+ Add table” above to add new tables.
           </span>
-          <button type="button" className="ds-accent-button" onClick={() => focusAgentChat()}>
-            Simulate a layout change
-          </button>
         </div>
       )}
     </section>

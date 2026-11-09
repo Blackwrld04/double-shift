@@ -14,8 +14,8 @@ export default defineAction({
   http: { method: "GET" },
   readOnly: true,
   searchHints: ["restaurant", "floor plan", "workspace", "current state"],
-  run: async () => {
-    const workspace = await loadWorkspace();
+  run: async (_input, ctx) => {
+    const workspace = await loadWorkspace(undefined, ctx?.userEmail);
     const latestRunByScenario = new Map<string, ReturnType<typeof runSummary>>();
     for (const run of workspace.runs) {
       if (!latestRunByScenario.has(run.scenarioId)) {
@@ -49,6 +49,9 @@ export default defineAction({
       })),
       runs: workspace.runs.map(runSummary),
       activity: workspace.activity,
+      onboarded: workspace.onboarded,
+      onboardingMode: workspace.onboardingMode,
+      availableVenues: workspace.availableVenues,
       constraints: {
         maxReplications: 100,
         defaultReplications: 25,

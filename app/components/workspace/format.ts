@@ -83,6 +83,17 @@ export function metricOf(metrics: RunMetrics | undefined, key: keyof RunMetrics)
 
 export const CLOCK_TICKS = ["5:00", "6:00", "7:00", "8:00", "9:00", "10:00"];
 
+export function formatClockTime(clock: string | undefined): string {
+  if (!clock) return "";
+  const match = /^(\d{1,2}):(\d{2})$/.exec(clock.trim());
+  if (!match) return clock;
+  const hour = Number(match[1]);
+  const mins = match[2];
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const normalizedHour = hour % 12 === 0 ? 12 : hour % 12;
+  return `${normalizedHour}:${mins} ${suffix}`;
+}
+
 export function clockFromMinute(minute: number): string {
   const hours = Math.floor(minute / 60);
   const mins = minute % 60;

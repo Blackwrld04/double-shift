@@ -310,7 +310,7 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
           </div>
           <h3>{proposal.title}</h3>
         </div>
-        <span className="ds-approval-badge">needs human</span>
+        <span className="ds-approval-badge">Pending Review</span>
       </div>
       {proposal.summary ? <p className="ds-proposal-summary">{proposal.summary}</p> : null}
 

@@ -4,24 +4,22 @@ import { z } from "zod";
 
 import { getDb, schema } from "../server/db/index.js";
 
-/** UI-ONLY: the operator drags, resizes or takes a table offline. */
 export default defineAction({
-  uiOnly: true,
   description:
-    "Move, resize, activate or take a table offline on the live floor plan. Human-only; the agent must stage a proposal instead.",
+    "Move, reposition, resize, activate, or update seats and section of a table on the floor plan.",
   schema: z.object({
-    tableId: z.string().min(1),
-    x: z.number().min(0).optional(),
-    y: z.number().min(0).optional(),
-    width: z.number().min(24).max(400).optional(),
-    height: z.number().min(24).max(400).optional(),
-    seats: z.number().int().min(1).max(20).optional(),
-    active: z.boolean().optional(),
-    sectionId: z.string().nullable().optional(),
-    notes: z.string().max(400).nullable().optional(),
+    tableId: z.string().min(1).describe("The ID of the table to reposition or update"),
+    x: z.number().min(0).optional().describe("X coordinate on the floor plan (0 to 1200)"),
+    y: z.number().min(0).optional().describe("Y coordinate on the floor plan (0 to 760)"),
+    width: z.number().min(24).max(400).optional().describe("Table width in pixels"),
+    height: z.number().min(24).max(400).optional().describe("Table height in pixels"),
+    seats: z.number().int().min(1).max(20).optional().describe("Seat capacity of the table (1 to 20)"),
+    active: z.boolean().optional().describe("Whether the table is active and available for seating"),
+    sectionId: z.string().nullable().optional().describe("Section ID the table belongs to"),
+    notes: z.string().max(400).nullable().optional().describe("Operator notes for the table"),
   }),
   http: { method: "POST" },
-  searchHints: ["move table", "floor plan", "seats"],
+  searchHints: ["move table", "reposition table", "floor plan", "seats"],
   run: async (args) => {
     const db = getDb();
     const [existing] = await db

@@ -3,8 +3,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb, schema } from "../server/db/index.js";
-import { parseJson } from "../server/lib/workspace.js";
-import { VENUE_ID } from "../server/lib/seed.js";
+import { getActiveVenueContext, parseJson } from "../server/lib/workspace.js";
 
 export default defineAction({
   description:
@@ -21,10 +20,11 @@ export default defineAction({
   searchHints: ["proposals", "pending approval", "staged changes"],
   run: async ({ status, limit }) => {
     const db = getDb();
+    const { venueId } = await getActiveVenueContext();
     const rows = await db
       .select()
       .from(schema.proposals)
-      .where(eq(schema.proposals.venueId, VENUE_ID));
+      .where(eq(schema.proposals.venueId, venueId));
     const filtered = rows
       .filter((proposal) => status === "all" || proposal.status === status)
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))

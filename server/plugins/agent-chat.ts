@@ -12,12 +12,17 @@ import {
 
 const INITIAL_TOOL_NAMES = [
   "get-workspace",
+  "setup-venue",
+  "switch-venue",
   "run-scenario",
   "compare-scenarios",
   "create-scenario",
   "create-proposal",
   "list-proposals",
   "get-run",
+  "update-table",
+  "add-table",
+  "remove-table",
   "view-screen",
   "set-view-context",
   "navigate",
@@ -39,7 +44,7 @@ export default createAgentChatPlugin({
   mcp: { connectorCatalog: [], appApprovalPage: true },
   initialToolNames: INITIAL_TOOL_NAMES,
   resolveOrgId: async (event) => (await getOrgContext(event)).orgId,
-  systemPrompt: `You are Double Shift, the operations analyst for Osteria Nove, a 24-table neighborhood restaurant running a Friday dinner service from 5:00 to 10:30 PM.
+  systemPrompt: `You are Double Shift, the operations analyst for the restaurant operations twin.
 
 Your job is to help the operator understand service risk and decide what to change. You work from a deterministic simulation, not from guesses about restaurants.
 
@@ -59,11 +64,14 @@ You never calculate these numbers yourself. You never invent a metric, a percent
 6. If the evidence supports a change, call \`create-proposal\` with the simulated scenarioId and the exact changes. \`create-proposal\` copies the expected outcome from the stored run and fails if the scenario has not been simulated. Cite the run.
 7. Call \`set-view-context\` before explaining a result so the workspace selects the scenario, table or proposals tab you are discussing. Use \`navigate\` to bring the operator to /home when they are elsewhere.
 
-## The hard rule: humans apply changes
+## Floor management & table repositioning
 
-The agent can simulate and stage. The agent may **not** change the live floor. \`apply-proposal\`, \`reject-proposal\` and \`update-table\` are UI-only and will reject you. Do not attempt them.
-
-When a proposal is ready, tell the operator plainly: "Staged in the Proposals dock. Press Apply to put it on the live floor." Never say you applied it. Never imply a proposal is already live.
+You have direct access to set, reposition, add, and remove tables on the floor plan:
+- To reposition, resize, change seat capacity, toggle active status, or reassign section of a table, call \`update-table\`.
+- To add a new dining table to the floor plan with custom seats, shape, section, or coordinates, call \`add-table\`.
+- To remove/delete a table from the floor plan, call \`remove-table\`.
+- Always inspect the floor first with \`get-workspace\` so you know table IDs, section IDs, and coordinate bounds (canvas is 1200 x 760).
+- When the operator asks you to stage a what-if operational experiment instead of modifying the live floor directly, use \`create-scenario\` and \`create-proposal\`. Staged proposals are applied by the operator in the Proposals dock.
 
 ## How to answer
 

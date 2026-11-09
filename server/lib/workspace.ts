@@ -1,5 +1,12 @@
 import { desc, eq } from "drizzle-orm";
 
+import {
+  getSetting,
+  getUserSetting,
+  putSetting,
+  putUserSetting,
+} from "@agent-native/core/settings";
+
 import { getDb, schema } from "../db/index.js";
 import {
   applyChangesToSim,
@@ -27,6 +34,66 @@ function parseJson<T>(value: string | null | undefined, fallback: T): T {
   }
 }
 
+export type ActiveVenueContext = {
+  venueId: string;
+  onboarded: boolean;
+  onboardingMode: "demo" | "custom" | null;
+};
+
+export async function getActiveVenueContext(userEmail?: string): Promise<ActiveVenueContext> {
+  try {
+    if (userEmail) {
+      const userOnboarding = (await getUserSetting(userEmail, "venue-onboarding")) as {
+        completed?: boolean;
+        mode?: "demo" | "custom";
+        venueId?: string;
+      } | null;
+      const userActive = (await getUserSetting(userEmail, "active-venue-id")) as {
+        venueId?: string;
+      } | null;
+
+      if (userOnboarding?.completed) {
+        return {
+          venueId: userActive?.venueId || userOnboarding.venueId || VENUE_ID,
+          onboarded: true,
+          onboardingMode: userOnboarding.mode ?? "custom",
+        };
+      }
+
+      return {
+        venueId: VENUE_ID,
+        onboarded: false,
+        onboardingMode: null,
+      };
+    }
+
+    const onboarding = (await getSetting("venue-onboarding")) as {
+      completed?: boolean;
+      mode?: "demo" | "custom";
+      venueId?: string;
+    } | null;
+    const activeSetting = (await getSetting("active-venue-id")) as {
+      venueId?: string;
+    } | null;
+
+    const isCompleted = Boolean(onboarding?.completed);
+    const mode = onboarding?.mode ?? null;
+    const venueId = activeSetting?.venueId || onboarding?.venueId || VENUE_ID;
+
+    return {
+      venueId,
+      onboarded: isCompleted,
+      onboardingMode: mode,
+    };
+  } catch {
+    return {
+      venueId: VENUE_ID,
+      onboarded: !userEmail,
+      onboardingMode: "demo",
+    };
+  }
+}
+
 export type WorkspaceData = {
   venue: typeof schema.venues.$inferSelect;
   floor: typeof schema.floors.$inferSelect;
@@ -40,18 +107,51 @@ export type WorkspaceData = {
   proposals: Array<typeof schema.proposals.$inferSelect>;
   runs: Array<typeof schema.runs.$inferSelect>;
   activity: Array<typeof schema.activity.$inferSelect>;
+  onboarded: boolean;
+  onboardingMode: "demo" | "custom" | null;
+  availableVenues: Array<{ id: string; name: string }>;
 };
 
-export async function loadWorkspace(): Promise<WorkspaceData> {
+export async function loadWorkspace(
+  explicitVenueId?: string,
+  userEmail?: string,
+): Promise<WorkspaceData> {
   await ensureSeed();
   const db = getDb();
-  const [venue] = await db.select().from(schema.venues).where(eq(schema.venues.id, VENUE_ID)).limit(1);
+
+  const allVenues = await db
+    .select({ id: schema.venues.id, name: schema.venues.name })
+    .from(schema.venues)
+    .orderBy(desc(schema.venues.createdAt));
+
+  const activeContext = await getActiveVenueContext(userEmail);
+  let targetVenueId = explicitVenueId || activeContext.venueId;
+
+  let [venue] = await db
+    .select()
+    .from(schema.venues)
+    .where(eq(schema.venues.id, targetVenueId))
+    .limit(1);
+
+  if (!venue) {
+    [venue] = await db
+      .select()
+      .from(schema.venues)
+      .where(eq(schema.venues.id, VENUE_ID))
+      .limit(1);
+    if (venue) targetVenueId = venue.id;
+  }
   if (!venue) throw new Error("Double Shift venue was not seeded.");
-  const [floor] = await db
+
+  let [floor] = await db
     .select()
     .from(schema.floors)
-    .where(eq(schema.floors.venueId, VENUE_ID))
+    .where(eq(schema.floors.venueId, targetVenueId))
     .limit(1);
+
+  if (!floor) {
+    [floor] = await db.select().from(schema.floors).limit(1);
+  }
   if (!floor) throw new Error("Double Shift floor was not seeded.");
 
   const [sections, tables, stations, staff, menu, demandProfiles, scenarios, proposals, runs, activity] =
@@ -59,13 +159,23 @@ export async function loadWorkspace(): Promise<WorkspaceData> {
       db.select().from(schema.sections).where(eq(schema.sections.floorId, floor.id)),
       db.select().from(schema.diningTables).where(eq(schema.diningTables.floorId, floor.id)),
       db.select().from(schema.stations).where(eq(schema.stations.floorId, floor.id)),
-      db.select().from(schema.staff).where(eq(schema.staff.venueId, VENUE_ID)),
-      db.select().from(schema.menuItems).where(eq(schema.menuItems.venueId, VENUE_ID)),
-      db.select().from(schema.demandProfiles).where(eq(schema.demandProfiles.venueId, VENUE_ID)),
-      db.select().from(schema.scenarios).where(eq(schema.scenarios.venueId, VENUE_ID)),
-      db.select().from(schema.proposals).where(eq(schema.proposals.venueId, VENUE_ID)),
-      db.select().from(schema.runs).where(eq(schema.runs.venueId, VENUE_ID)).orderBy(desc(schema.runs.createdAt)).limit(30),
-      db.select().from(schema.activity).where(eq(schema.activity.venueId, VENUE_ID)).orderBy(desc(schema.activity.createdAt)).limit(20),
+      db.select().from(schema.staff).where(eq(schema.staff.venueId, targetVenueId)),
+      db.select().from(schema.menuItems).where(eq(schema.menuItems.venueId, targetVenueId)),
+      db.select().from(schema.demandProfiles).where(eq(schema.demandProfiles.venueId, targetVenueId)),
+      db.select().from(schema.scenarios).where(eq(schema.scenarios.venueId, targetVenueId)),
+      db.select().from(schema.proposals).where(eq(schema.proposals.venueId, targetVenueId)),
+      db
+        .select()
+        .from(schema.runs)
+        .where(eq(schema.runs.venueId, targetVenueId))
+        .orderBy(desc(schema.runs.createdAt))
+        .limit(30),
+      db
+        .select()
+        .from(schema.activity)
+        .where(eq(schema.activity.venueId, targetVenueId))
+        .orderBy(desc(schema.activity.createdAt))
+        .limit(20),
     ]);
 
   return {
@@ -81,6 +191,9 @@ export async function loadWorkspace(): Promise<WorkspaceData> {
     proposals: proposals.sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     runs,
     activity,
+    onboarded: activeContext.onboarded,
+    onboardingMode: activeContext.onboardingMode,
+    availableVenues: allVenues,
   };
 }
 
