@@ -1,0 +1,8 @@
+.output
+.agent-native
+data
+.data
+.tmp
+*.log
+tests
+docs

@@ -1,0 +1,25 @@
+databases:
+  - name: double-shift-db
+    databaseName: doubleshift
+    user: doubleshift
+    plan: free
+
+services:
+  - type: web
+    name: double-shift
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build:render
+    startCommand: node .output/server/index.mjs
+    preDeployCommand: pnpm migrate:production
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: DATABASE_URL
+        fromDatabase:
+          name: double-shift-db
+          property: connectionString
+      - key: BETTER_AUTH_SECRET
+        generateValue: true
+      - key: BETTER_AUTH_URL
+        sync: false

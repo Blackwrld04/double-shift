@@ -6,6 +6,9 @@
   "type": "module",
   "scripts": {
     "migrate:production": "tsx scripts/migrate-production.ts",
+    "build:vercel": "AGENT_NATIVE_VERCEL_CRON_SCHEDULE=\"0 9 * * *\" NITRO_PRESET=vercel agent-native build",
+    "build:render": "NITRO_PRESET=render_com agent-native build",
+    "start:render": "node .output/server/index.mjs",
     "dev": "agent-native dev --open",
     "build": "agent-native build",
     "start": "agent-native start",
