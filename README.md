@@ -319,11 +319,11 @@ Double Shift is architected for instant deployment to both **Vercel** and **Rend
 
 ### Deployment Environment Variables
 
-| Variable | Required | Description | Example |
+| Variable | Required | Description | Format / Source |
 | :--- | :---: | :--- | :--- |
-| `DATABASE_URL` | **Yes** | Remote PostgreSQL connection string | `postgresql://user:pass@ep-cool-db.us-east-2.neon.tech/doubleshift?sslmode=require` |
+| `DATABASE_URL` | **Yes** | Real remote PostgreSQL connection string (Do **NOT** copy a placeholder) | From your Neon console (e.g. `postgresql://neondb_owner:npg_...@[your-endpoint]-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require`) or Render Internal DB URL |
 | `BETTER_AUTH_SECRET` | **Yes** | 32-byte secret for encrypting auth tokens | Generate with `openssl rand -hex 32` |
-| `BETTER_AUTH_URL` | Optional | Canonical public URL of your app | `https://double-shift.vercel.app` |
+| `BETTER_AUTH_URL` | Optional | Canonical public URL of your app | `https://double-shift.vercel.app` or `https://double-shift.onrender.com` |
 | `CRON_SECRET` | Vercel Only | Token for scheduled agent sweeps | Generate with `openssl rand -hex 32` |
 
 ---
